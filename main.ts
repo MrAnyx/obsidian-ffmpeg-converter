@@ -55,17 +55,25 @@ class FileEntry implements IFileEntry {
 
 interface SettingType {
 	customFfmpegPath: string;
+	quality: number;
 	includePng: boolean;
 	includeJpg: boolean;
+	includeWebp: boolean;
+	includeGif: boolean;
+	outputFormat: string;
 }
 
 const DEFAULT_SETTINGS: SettingType = {
 	customFfmpegPath: "",
+	quality: 80,
 	includePng: true,
 	includeJpg: true,
+	includeGif: true,
+	includeWebp: false,
+	outputFormat: "webp",
 };
 
-export default class WebpCompressPlugin extends Plugin {
+export default class FfmpegCompressPlugin extends Plugin {
 	settings: SettingType;
 
 	async convertImages() {
@@ -91,8 +99,11 @@ export default class WebpCompressPlugin extends Plugin {
 			.getFiles()
 			.filter((f) =>
 				[
+					// https://developer.mozilla.org/fr/docs/Web/Media/Formats/Image_types
 					...(this.settings.includePng ? ["png"] : []),
-					...(this.settings.includeJpg ? ["jpg", "jpeg"] : []),
+					...(this.settings.includeJpg ? ["jpg", "jpeg", "jfif", "pjpeg", "pjp"] : []),
+					...(this.settings.includeGif ? ["gif"] : []),
+					...(this.settings.includeWebp ? ["webp"] : []),
 				].includes(f.extension)
 			);
 
@@ -104,7 +115,7 @@ export default class WebpCompressPlugin extends Plugin {
 				extension: "tmp",
 			});
 			const newFile = new FileEntry(f, {
-				extension: "webp",
+				extension: this.settings.outputFormat,
 			});
 
 			// Copy original file to temporary file
@@ -126,7 +137,12 @@ export default class WebpCompressPlugin extends Plugin {
 
 			// Convert to webp using ffmpeg
 			await new Promise((resolve, reject) => {
-				ffmpeg(tmpFile.getFullPathWithExtension())
+				ffmpeg()
+					.outputOptions([
+						'-loop', '0',
+						'-qscale', this.settings.quality.toString()
+					])
+					.input(tmpFile.getFullPathWithExtension())
 					.output(newFile.getFullPathWithExtension())
 					.on("end", resolve)
 					.on("error", reject)
@@ -160,7 +176,7 @@ export default class WebpCompressPlugin extends Plugin {
 			callback: async () => await this.convertImages(),
 		});
 
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new SettingTab(this.app, this));
 	}
 
 	onunload() {}
@@ -178,26 +194,10 @@ export default class WebpCompressPlugin extends Plugin {
 	}
 }
 
-// class SampleModal extends Modal {
-// 	constructor(app: App) {
-// 		super(app);
-// 	}
+class SettingTab extends PluginSettingTab {
+plugin: FfmpegCompressPlugin;
 
-// 	onOpen() {
-// 		const { contentEl } = this;
-// 		contentEl.setText("Woah!");
-// 	}
-
-// 	onClose() {
-// 		const { contentEl } = this;
-// 		contentEl.empty();
-// 	}
-// }
-
-class SampleSettingTab extends PluginSettingTab {
-plugin: WebpCompressPlugin;
-
-	constructor(app: App, plugin: WebpCompressPlugin) {
+	constructor(app: App, plugin: FfmpegCompressPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -213,17 +213,49 @@ plugin: WebpCompressPlugin;
 			)
 			.addText((text) =>
 				text
-					.setPlaceholder("ffmpeg")
 					.setValue(this.plugin.settings.customFfmpegPath)
 					.onChange(async (value) => {
 						this.plugin.settings.customFfmpegPath = value.trim();
 						await this.plugin.saveSettings();
 					})
 			);
+	
+	
+	new Setting(containerEl)
+		.setName("Output format")
+			.setDesc("Select the output format of the images. Webp is the most performent image format as it is the most space efficient")
+			.addDropdown((text) =>
+				text
+					.addOptions({
+						png: "png",
+						jpg: "jpg",
+						gif: "gif",
+						webp: "webp",
+					})
+					.setValue(this.plugin.settings.outputFormat)
+					.onChange(async (value) => {
+						this.plugin.settings.outputFormat = value.trim();
+						await this.plugin.saveSettings();
+					})
+			);
+		
+	new Setting(containerEl)
+		.setName("Output quality")
+		.setDesc("Output quality used during the conversion")
+		.addSlider((slider) =>
+			slider
+				.setLimits(0, 100, 5)
+				.setValue(this.plugin.settings.quality)
+				.setDynamicTooltip()
+				.onChange(async (value) => {
+					this.plugin.settings.quality = value;
+					await this.plugin.saveSettings();
+				})
+		);
 
 		new Setting(containerEl)
 			.setName("Include PNG")
-			.setDesc("Include all PNG images")
+			.setDesc("Include all png image formats (png)")
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.includePng)
@@ -233,13 +265,35 @@ plugin: WebpCompressPlugin;
 					})
 			);
 		new Setting(containerEl)
-			.setName("Include JPG/JPEG")
-			.setDesc("Include all JPG and JPEG images")
+			.setName("Include JPEG")
+			.setDesc("Include all jpeg image formats (jpg, jpeg, jfif, pjpeg and pjp)")
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.includeJpg)
 					.onChange(async (value) => {
 						this.plugin.settings.includeJpg = value;
+						await this.plugin.saveSettings();
+					})
+			);
+		new Setting(containerEl)
+			.setName("Include GIF")
+			.setDesc("Include all gif image format (gif)")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.includeGif)
+					.onChange(async (value) => {
+						this.plugin.settings.includeGif = value;
+						await this.plugin.saveSettings();
+					})
+			);
+		new Setting(containerEl)
+			.setName("Include WEBP")
+			.setDesc("Include all webp image format (webp)")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.includeWebp)
+					.onChange(async (value) => {
+						this.plugin.settings.includeWebp = value;
 						await this.plugin.saveSettings();
 					})
 			);
