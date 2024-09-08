@@ -1,11 +1,16 @@
 import fs from "fs";
 import { addIcon, Notice, Plugin, TFile } from "obsidian";
-import { nanoid } from "nanoid";
+import { customAlphabet } from "nanoid/non-secure"; // No need to add extra layer of security ad it is only used for file names
 import { DefaultSettings, SettingTab, SettingType } from "./settings";
 import FileEntry from "./fileEntry";
 import PathFinder from "./pathFinder";
 import FfmpegUtility from "./ffmpegUtility";
 import { AvifExtensions, BmpExtensions, GifExtensions, JpgExtensions, MkvExtensions, MovExtensions, Mp4Extensions, PngExtensions, Type, WebmExtensions, WebpExtensions } from "./formats";
+
+/**
+ * TODO Improve algo
+ * TODO Command to cleanup when error
+ */
 
 export default class FfmpegCompressPlugin extends Plugin
 {
@@ -49,7 +54,9 @@ export default class FfmpegCompressPlugin extends Plugin
 
     generateWorkFiles(file: TFile)
     {
-        const uniqueId = nanoid();
+        // Unique must not contains "_" because it is used to separate the file name, the extension and the unique id.
+        const nanoid = customAlphabet("0123456789abcdefghijklmnopkrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        const uniqueId = nanoid(this.settings.uniqueIdLength);
 
         const originalFile = new FileEntry(file);
 
@@ -93,55 +100,61 @@ export default class FfmpegCompressPlugin extends Plugin
 
         const files = this.getFilesToConvert();
 
-        // Use of traditional for of to prevent file conflict in async programming
-        for (const f of files)
+        new Notice(`Found ${files.length} files to convert`);
+
+        if (files.length > 0)
         {
-            const { originalFile, newFile, tmpFile } = this.generateWorkFiles(f);
+            let fileIndex = 1;
+            let progressNotice: Notice | undefined;
 
-            try
+            // Use of traditional for of to prevent file conflict in async programming
+            for (const f of files)
             {
-                // Copy original file to temporary file
-                await this.app.vault.copy(
-                    originalFile.file,
-                    tmpFile.getVaultPathWithExtension(),
-                );
-
-                if (!fs.existsSync(newFile.getFullPathWithExtension()))
+                if (progressNotice)
                 {
-                    // Rename original file to new file
-                    await this.app.fileManager.renameFile(
-                        originalFile.file,
-                        newFile.getVaultPathWithExtension(),
-                    );
+                    progressNotice.setMessage(`Processing file ${fileIndex}/${files.length} (${f.name})`);
                 }
                 else
                 {
-                // Remove original renamed file
-                    await this.app.vault.adapter.remove(
-                        originalFile.getVaultPathWithExtension(),
-                    );
+                    progressNotice = new Notice(`Processing file ${fileIndex}/${files.length} (${f.name})`, 0);
                 }
 
-                // Remove original renamed file
-                await this.app.vault.adapter.remove(
-                    newFile.getVaultPathWithExtension(),
-                );
+                const { originalFile, newFile, tmpFile } = this.generateWorkFiles(f);
 
-                // Convert to new format using ffmpeg
-                await ffmpeg.convert(tmpFile, newFile);
+                try
+                {
+                // Copy original file to temporary file
+                    await this.app.vault.copy(originalFile.file, tmpFile.getVaultPathWithExtension());
 
-                // Remove temporary file
-                await this.app.vault.adapter.remove(
-                    tmpFile.getVaultPathWithExtension(),
-                );
+                    if (fs.existsSync(newFile.getFullPathWithExtension()))
+                    {
+                    // Rename original file to new file
+                        await this.app.vault.adapter.remove(newFile.getVaultPathWithExtension());
+                    }
+
+                    await this.app.fileManager.renameFile(originalFile.file, newFile.getVaultPathWithExtension());
+
+                    // Remove original renamed file
+                    await this.app.vault.adapter.remove(newFile.getVaultPathWithExtension());
+
+                    // Convert to new format using ffmpeg
+                    await ffmpeg.convert(tmpFile, newFile);
+
+                    // Remove temporary file
+                    await this.app.vault.adapter.remove(tmpFile.getVaultPathWithExtension());
+
+                    fileIndex++;
+                }
+                catch (e: any)
+                {
+                    new Notice("An error occured, please check the developer console for more details (Ctrl+Shift+I for Windows or Linux or Cmd+Shift+I for Mac)");
+                    console.error(`An error occured. Check the validity of the file ${f.path}. You can delete all temporary files generated during the operation.`);
+                    console.error(e);
+                    break;
+                }
             }
-            catch (e: any)
-            {
-                new Notice("An error occured, please check the developer console for more details (Ctrl+Shift+I for Windows or Linux or Cmd+Shift+I for Mac)");
-                console.error(`An error occured. Check the validity of the file ${f.path}. You can delete all temporary files generated during the operation.`);
-                console.error(e);
-                break;
-            }
+            new Notice("Ffmpeg conversion ended successfully");
+            setTimeout(() => (progressNotice as Notice).hide(), 3000);
         }
     }
 

@@ -7,6 +7,7 @@ export interface SettingType
     // General
     customFfmpegPath: string;
     overwrite: boolean;
+    uniqueIdLength: number;
 
     // Image
     imageQuality: number;
@@ -33,6 +34,7 @@ export interface SettingType
 export const DefaultSettings: SettingType = {
     customFfmpegPath: "",
     overwrite: true,
+    uniqueIdLength: 20,
     imageQuality: 80,
     imageMaxSize: 2000,
     includeAvif: true,
@@ -90,6 +92,20 @@ export class SettingTab extends PluginSettingTab
                     .onChange(async (value) =>
                     {
                         this.plugin.settings.overwrite = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
+        new Setting(this.containerEl)
+            .setName("Unique ID length")
+            .setDesc("Length of the unique id generate to make converted file different. This option is used only when the overwrite option is not toggled.")
+            .addSlider(text =>
+                text
+                    .setLimits(1, 100, 1)
+                    .setDynamicTooltip()
+                    .setValue(this.plugin.settings.uniqueIdLength)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.uniqueIdLength = value;
                         await this.plugin.saveSettings();
                     }),
             );
