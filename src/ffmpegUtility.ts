@@ -5,14 +5,24 @@ import { Type } from "./formats";
 export default class FfmpegUtility
 {
     private ffmpegPath: string;
-    private quality: number;
-    private maxSize: number;
 
-    constructor(ffmpegPath: string, quality: number, maxSize: number)
+    private imageQuality: number;
+    private imageMaxSize: number;
+
+    private videoBitrateForVideo: number;
+    private audioBitrateForVideo: number;
+    private videoMaxSize: number;
+
+    constructor(ffmpegPath: string, imageQuality: number, imageMaxSize: number, videoBitrateForVideo: number, audioBitrateForVideo: number, videoMaxSize: number)
     {
         this.ffmpegPath = ffmpegPath;
-        this.quality = quality;
-        this.maxSize = maxSize;
+
+        this.imageQuality = imageQuality;
+        this.imageMaxSize = imageMaxSize;
+
+        this.videoBitrateForVideo = videoBitrateForVideo;
+        this.audioBitrateForVideo = audioBitrateForVideo;
+        this.videoMaxSize = videoMaxSize;
     }
 
     private imageCommand()
@@ -20,14 +30,14 @@ export default class FfmpegUtility
         // ffmpeg -i image.png -vf "scale='if(gt(iw,{maxSize}),{maxSize},-1)':'if(gt(ih,{maxSize}),{maxSize},-1)':force_original_aspect_ratio=decrease" -q:v {quality} output.webp
         return ffmpeg()
             .outputOptions([
-                "-loop", "0",
-                "-q:v", this.quality.toString(),
+                "-q:v", this.imageQuality.toString(),
+                "-loop", "0" // TODO changer et utiliser la méthode loop(0)
             ])
             .filterGraph({
                 filter: "scale",
                 options: {
-                    w: `if(gt(iw,${this.maxSize}),${this.maxSize},-1)`,
-                    h: `if(gt(ih,${this.maxSize}),${this.maxSize},-1)`,
+                    w: `if(gt(iw,${this.imageMaxSize}),${this.imageMaxSize},-1)`,
+                    h: `if(gt(ih,${this.imageMaxSize}),${this.imageMaxSize},-1)`,
                     force_original_aspect_ratio: "decrease"
                 }
             })
@@ -38,13 +48,13 @@ export default class FfmpegUtility
     {
         // ffmpeg -i input.mp4 -vf "scale='min({maxSize},iw*min({maxSize}/iw,{maxSize}/ih))':'min({maxSize},ih*min({maxSize}/iw,{maxSize}/ih))':force_original_aspect_ratio=decrease" -b:v {videoBitrate} -b:a {audioBitrate} output.webm
         return ffmpeg()
-            .videoBitrate("100k")
-            .audioBitrate("20k")
+            .videoBitrate(`${this.videoBitrateForVideo}k`)
+            .audioBitrate(`${this.audioBitrateForVideo}k`)
             .filterGraph({
                 filter: "scale",
                 options: {
-                    w: `if(gt(iw,${this.maxSize}),${this.maxSize},-1)`,
-                    h: `if(gt(ih,${this.maxSize}),${this.maxSize},-1)`,
+                    w: `if(gt(iw,${this.videoMaxSize}),${this.videoMaxSize},-1)`,
+                    h: `if(gt(ih,${this.videoMaxSize}),${this.videoMaxSize},-1)`,
                     force_original_aspect_ratio: "decrease"
                 }
             })
@@ -72,6 +82,9 @@ export default class FfmpegUtility
 
             command
                 .setFfmpegPath(this.ffmpegPath)
+                .addOptions([
+                    "-y" // To overwrite output file if it exist
+                ])
                 .input(inputFile.getFullPathWithExtension())
                 .output(outputFile.getFullPathWithExtension())
                 .on("end", resolve)

@@ -1,10 +1,11 @@
+import fs from "fs";
 import { addIcon, Notice, Plugin, TFile } from "obsidian";
 import { nanoid } from "nanoid";
 import { DefaultSettings, SettingTab, SettingType } from "./settings";
 import FileEntry from "./fileEntry";
 import PathFinder from "./pathFinder";
 import FfmpegUtility from "./ffmpegUtility";
-import { GifExtensions, JpgExtensions, Mp4Extensions, PngExtensions, Type, WebmExtensions, WebpExtensions } from "./formats";
+import { AvifExtensions, BmpExtensions, GifExtensions, JpgExtensions, MkvExtensions, MovExtensions, Mp4Extensions, PngExtensions, Type, WebmExtensions, WebpExtensions } from "./formats";
 
 export default class FfmpegCompressPlugin extends Plugin
 {
@@ -16,12 +17,18 @@ export default class FfmpegCompressPlugin extends Plugin
             .getFiles()
             .filter(f =>
                 [
-                    // TODO Améliorer
+                    // Images
+                    ...(this.settings.includeAvif ? AvifExtensions : []),
+                    ...(this.settings.includeBmp ? BmpExtensions : []),
                     ...(this.settings.includePng ? PngExtensions : []),
                     ...(this.settings.includeJpg ? JpgExtensions : []),
                     ...(this.settings.includeGif ? GifExtensions : []),
                     ...(this.settings.includeWebp ? WebpExtensions : []),
+
+                    // Video
                     ...(this.settings.includeMp4 ? Mp4Extensions : []),
+                    ...(this.settings.includeMkv ? MkvExtensions : []),
+                    ...(this.settings.includeMov ? MovExtensions : []),
                     ...(this.settings.includeWebm ? WebmExtensions : []),
                 ].includes(f.extension),
             );
@@ -42,14 +49,20 @@ export default class FfmpegCompressPlugin extends Plugin
 
     generateWorkFiles(file: TFile)
     {
+        const uniqueId = nanoid();
+
         const originalFile = new FileEntry(file);
+
         const tmpFile = new FileEntry(file, {
-            name: `${originalFile.name}_${nanoid(6)}`,
+            name: `${originalFile.name}_${originalFile.extension}_${uniqueId}`,
             extension: "tmp",
         });
 
         const newFile = new FileEntry(file, {
             extension: this.getNewFileExtension(originalFile),
+
+            // Update the name to make it unique if overwrite is disabled
+            ...(!this.settings.overwrite ? { name: `${originalFile.name}_${uniqueId}` } : {})
         });
 
         return {
@@ -65,13 +78,18 @@ export default class FfmpegCompressPlugin extends Plugin
 
         if (ffmpegPath === undefined)
         {
-            new Notice(
-                "Ffmpeg is not installed on your system. Please check your environment variable or the settings path.",
-            );
+            new Notice("Ffmpeg is not installed on your system. Please check your environment variable or the settings path.");
             return;
         }
 
-        const ffmpeg = new FfmpegUtility(ffmpegPath, this.settings.imageQuality, this.settings.imageMaxSize);
+        const ffmpeg = new FfmpegUtility(
+            ffmpegPath,
+            this.settings.imageQuality,
+            this.settings.imageMaxSize,
+            this.settings.videoBitrateForVideo,
+            this.settings.audioBitrateForVideo,
+            this.settings.videoMaxSize,
+        );
 
         const files = this.getFilesToConvert();
 
@@ -88,11 +106,21 @@ export default class FfmpegCompressPlugin extends Plugin
                     tmpFile.getVaultPathWithExtension(),
                 );
 
-                // Rename original file to new file
-                await this.app.fileManager.renameFile(
-                    originalFile.file,
-                    newFile.getVaultPathWithExtension(),
-                );
+                if (!fs.existsSync(newFile.getFullPathWithExtension()))
+                {
+                    // Rename original file to new file
+                    await this.app.fileManager.renameFile(
+                        originalFile.file,
+                        newFile.getVaultPathWithExtension(),
+                    );
+                }
+                else
+                {
+                // Remove original renamed file
+                    await this.app.vault.adapter.remove(
+                        originalFile.getVaultPathWithExtension(),
+                    );
+                }
 
                 // Remove original renamed file
                 await this.app.vault.adapter.remove(

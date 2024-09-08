@@ -1,15 +1,18 @@
 import { PluginSettingTab, App, Setting } from "obsidian";
 import FfmpegCompressPlugin from "./main";
-import { GifExtensions, ImageExtensions, JpgExtensions, Mp4Extensions, PngExtensions, VideoExtensions, WebmExtensions, WebpExtensions } from "./formats";
+import { AvifExtensions, BmpExtensions, GifExtensions, ImageExtensions, JpgExtensions, MkvExtensions, MovExtensions, Mp4Extensions, PngExtensions, VideoExtensions, WebmExtensions, WebpExtensions } from "./formats";
 
 export interface SettingType
 {
     // General
     customFfmpegPath: string;
+    overwrite: boolean;
 
     // Image
     imageQuality: number;
     imageMaxSize: number;
+    includeAvif: boolean;
+    includeBmp: boolean;
     includePng: boolean;
     includeJpg: boolean;
     includeGif: boolean;
@@ -21,14 +24,19 @@ export interface SettingType
     videoBitrateForVideo: number;
     audioBitrateForVideo: number;
     includeMp4: boolean;
+    includeMkv: boolean;
+    includeMov: boolean;
     includeWebm: boolean;
     outputVideoFormat: string;
 }
 
 export const DefaultSettings: SettingType = {
     customFfmpegPath: "",
+    overwrite: true,
     imageQuality: 80,
     imageMaxSize: 2000,
+    includeAvif: true,
+    includeBmp: true,
     includePng: true,
     includeJpg: true,
     includeGif: true,
@@ -38,6 +46,8 @@ export const DefaultSettings: SettingType = {
     videoBitrateForVideo: 2000, // k
     audioBitrateForVideo: 32, // k
     includeMp4: true,
+    includeMkv: true,
+    includeMov: true,
     includeWebm: false,
     outputVideoFormat: "webm"
 };
@@ -54,7 +64,7 @@ export class SettingTab extends PluginSettingTab
 
     displayGeneralSettings()
     {
-        this.containerEl.createEl("h3", {
+        this.containerEl.createEl("h1", {
             text: "General Settings",
         });
         new Setting(this.containerEl)
@@ -71,11 +81,23 @@ export class SettingTab extends PluginSettingTab
                         await this.plugin.saveSettings();
                     }),
             );
+        new Setting(this.containerEl)
+            .setName("Overwrite")
+            .setDesc("Replace the output file if it already exist ?")
+            .addToggle(text =>
+                text
+                    .setValue(this.plugin.settings.overwrite)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.overwrite = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
     }
 
     displayImageSettings()
     {
-        this.containerEl.createEl("h3", {
+        this.containerEl.createEl("h1", {
             text: "Image Settings",
         });
         new Setting(this.containerEl)
@@ -130,6 +152,33 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
 
+        this.containerEl.createEl("h3", {
+            text: "Image formats",
+        });
+        new Setting(this.containerEl)
+            .setName("Include AVIF")
+            .setDesc(`Include all avif files formats (${AvifExtensions.join(", ")})`)
+            .addToggle(toggle =>
+                toggle
+                    .setValue(this.plugin.settings.includeAvif)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.includeAvif = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
+        new Setting(this.containerEl)
+            .setName("Include BMP")
+            .setDesc(`Include all bmp files formats (${BmpExtensions.join(", ")})`)
+            .addToggle(toggle =>
+                toggle
+                    .setValue(this.plugin.settings.includeBmp)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.includeBmp = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
         new Setting(this.containerEl)
             .setName("Include PNG")
             .setDesc(`Include all png files formats (${PngExtensions.join(", ")})`)
@@ -143,8 +192,8 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
         new Setting(this.containerEl)
-            .setName("Include JPEG")
-            .setDesc(`Include all jpeg files formats (${JpgExtensions.join(", ")})`)
+            .setName("Include JPG")
+            .setDesc(`Include all jpg files formats (${JpgExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeJpg)
@@ -182,7 +231,7 @@ export class SettingTab extends PluginSettingTab
 
     displayVideoSettings()
     {
-        this.containerEl.createEl("h3", {
+        this.containerEl.createEl("h1", {
             text: "Video Settings",
         });
         new Setting(this.containerEl)
@@ -250,6 +299,9 @@ export class SettingTab extends PluginSettingTab
                         await this.plugin.saveSettings();
                     }),
             );
+        this.containerEl.createEl("h3", {
+            text: "Video formats",
+        });
         new Setting(this.containerEl)
             .setName("Include MP4")
             .setDesc(`Include all mp4 files formats (${Mp4Extensions.join(", ")})`)
@@ -259,6 +311,30 @@ export class SettingTab extends PluginSettingTab
                     .onChange(async (value) =>
                     {
                         this.plugin.settings.includeMp4 = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
+        new Setting(this.containerEl)
+            .setName("Include MKV")
+            .setDesc(`Include all mkv files formats (${MkvExtensions.join(", ")})`)
+            .addToggle(toggle =>
+                toggle
+                    .setValue(this.plugin.settings.includeMkv)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.includeMkv = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
+        new Setting(this.containerEl)
+            .setName("Include MOV")
+            .setDesc(`Include all mov files formats (${MovExtensions.join(", ")})`)
+            .addToggle(toggle =>
+                toggle
+                    .setValue(this.plugin.settings.includeMov)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.includeMov = value;
                         await this.plugin.saveSettings();
                     }),
             );
