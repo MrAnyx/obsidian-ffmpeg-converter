@@ -123,12 +123,12 @@ export default class FfmpegCompressPlugin extends Plugin
 
                 try
                 {
-                // Copy original file to temporary file
+                    // Copy original file to temporary file
                     await this.app.vault.copy(originalFile.file, tmpFile.getVaultPathWithExtension());
 
                     if (fs.existsSync(newFile.getFullPathWithExtension()))
                     {
-                    // Rename original file to new file
+                        // Rename original file to new file
                         await this.app.vault.adapter.remove(newFile.getVaultPathWithExtension());
                     }
 
