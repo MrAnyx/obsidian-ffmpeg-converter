@@ -1,6 +1,6 @@
 import { PluginSettingTab, App, Setting } from "obsidian";
 import FfmpegCompressPlugin from "./main";
-import { AvifExtensions, BmpExtensions, GifExtensions, ImageExtensions, JpgExtensions, MkvExtensions, MovExtensions, Mp4Extensions, PngExtensions, VideoExtensions, WebmExtensions, WebpExtensions } from "./formats";
+import { AvifExtensions, BmpExtensions, GifExtensions, ImageExtensions, JpgExtensions, MkvExtensions, MovExtensions, Mp4Extensions, OgvExtensions, PngExtensions, VideoExtensions, WebmExtensions, WebpExtensions } from "./formats";
 
 export interface SettingType
 {
@@ -27,6 +27,7 @@ export interface SettingType
     includeMp4: boolean;
     includeMkv: boolean;
     includeMov: boolean;
+    includeOgv: boolean;
     includeWebm: boolean;
     outputVideoFormat: string;
 }
@@ -50,6 +51,7 @@ export const DefaultSettings: SettingType = {
     includeMp4: true,
     includeMkv: true,
     includeMov: true,
+    includeOgv: true,
     includeWebm: false,
     outputVideoFormat: "webm"
 };
@@ -351,6 +353,18 @@ export class SettingTab extends PluginSettingTab
                     .onChange(async (value) =>
                     {
                         this.plugin.settings.includeMov = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
+        new Setting(this.containerEl)
+            .setName("Include OGV")
+            .setDesc(`Include all ogv files formats (${OgvExtensions.join(", ")})`)
+            .addToggle(toggle =>
+                toggle
+                    .setValue(this.plugin.settings.includeOgv)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.includeOgv = value;
                         await this.plugin.saveSettings();
                     }),
             );

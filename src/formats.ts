@@ -23,11 +23,13 @@ export const ImageExtensions = [
 export const Mp4Extensions = ["mp4"];
 export const MkvExtensions = ["mkv"];
 export const MovExtensions = ["mov"];
+export const OgvExtensions = ["ogv"];
 export const WebmExtensions = ["webm"];
 export const VideoExtensions = [
     ...Mp4Extensions,
     ...MkvExtensions,
     ...MovExtensions,
+    ...OgvExtensions,
     ...WebmExtensions,
 ];
 

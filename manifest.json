@@ -1,10 +1,10 @@
 {
-	"id": "ffmpeg-converter",
-	"name": "Ffmpeg Converter",
-	"version": "1.0.0",
-	"minAppVersion": "0.15.0",
-	"description": "Convert most used images format into webp to optimize your vault space",
-	"author": "MrAnyx",
-	"authorUrl": "https://github.com/MrAnyx",
-	"isDesktopOnly": true
+    "id": "ffmpeg-converter",
+    "name": "Ffmpeg Converter",
+    "version": "1.0.0",
+    "minAppVersion": "0.15.0",
+    "description": "Convert most used images format into another format to optimize your vault space",
+    "author": "MrAnyx",
+    "authorUrl": "https://github.com/MrAnyx",
+    "isDesktopOnly": true
 }

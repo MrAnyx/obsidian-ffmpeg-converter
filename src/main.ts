@@ -5,12 +5,7 @@ import { DefaultSettings, SettingTab, SettingType } from "./settings";
 import FileEntry from "./fileEntry";
 import PathFinder from "./pathFinder";
 import FfmpegUtility from "./ffmpegUtility";
-import { AvifExtensions, BmpExtensions, GifExtensions, JpgExtensions, MkvExtensions, MovExtensions, Mp4Extensions, PngExtensions, Type, WebmExtensions, WebpExtensions } from "./formats";
-
-/**
- * TODO Improve algo
- * TODO Command to cleanup when error
- */
+import { AvifExtensions, BmpExtensions, GifExtensions, JpgExtensions, MkvExtensions, MovExtensions, Mp4Extensions, OgvExtensions, PngExtensions, Type, WebmExtensions, WebpExtensions } from "./formats";
 
 export default class FfmpegCompressPlugin extends Plugin
 {
@@ -34,6 +29,7 @@ export default class FfmpegCompressPlugin extends Plugin
                     ...(this.settings.includeMp4 ? Mp4Extensions : []),
                     ...(this.settings.includeMkv ? MkvExtensions : []),
                     ...(this.settings.includeMov ? MovExtensions : []),
+                    ...(this.settings.includeOgv ? OgvExtensions : []),
                     ...(this.settings.includeWebm ? WebmExtensions : []),
                 ].includes(f.extension),
             );
