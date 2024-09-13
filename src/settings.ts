@@ -1,6 +1,6 @@
 import { PluginSettingTab, App, Setting } from "obsidian";
 import FfmpegCompressPlugin from "./main";
-import { AvifExtensions, BmpExtensions, GifExtensions, ImageExtensions, JpgExtensions, MkvExtensions, MovExtensions, Mp4Extensions, PngExtensions, VideoExtensions, WebmExtensions, WebpExtensions } from "./formats";
+import { AudioExtensions, AvifImageExtensions, BmpImageExtensions, FlacAudioExtensions, GifImageExtensions, ImageExtensions, JpgImageExtensions, M4aAudioExtensions, MkvVideoExtensions, MovVideoExtensions, Mp3AudioExtensions, Mp4VideoExtensions, PngImageExtensions, VideoExtensions, WavAudioExtensions, WebmAudioExtensions, WebmVideoExtensions, WebpImageExtensions } from "./formats";
 
 export interface SettingType
 {
@@ -12,46 +12,65 @@ export interface SettingType
     // Image
     imageQuality: number;
     imageMaxSize: number;
-    includeAvif: boolean;
-    includeBmp: boolean;
-    includePng: boolean;
-    includeJpg: boolean;
-    includeGif: boolean;
-    includeWebp: boolean;
+    includeImageAvif: boolean;
+    includeImageBmp: boolean;
+    includeImagePng: boolean;
+    includeImageJpg: boolean;
+    includeImageGif: boolean;
+    includeAudioWebp: boolean;
     outputImageFormat: string;
 
     // Video
     videoMaxSize: number;
     videoBitrateForVideo: number;
     audioBitrateForVideo: number;
-    includeMp4: boolean;
-    includeMkv: boolean;
-    includeMov: boolean;
-    includeWebm: boolean;
+    includeVideoMp4: boolean;
+    includeVideoMkv: boolean;
+    includeVideoMov: boolean;
+    includeVideoWebm: boolean;
     outputVideoFormat: string;
+
+    // Audio
+    audioBitrateForAudio: number;
+    includeAudioFlac: boolean;
+    includeAudioWav: boolean;
+    includeAudioM4a: boolean;
+    includeAudioMp3: boolean;
+    includeAudioWebm: boolean;
+    outputAudioFormat: string;
 }
 
 export const DefaultSettings: SettingType = {
     customFfmpegPath: "",
     overwrite: true,
     uniqueIdLength: 20,
+
     imageQuality: 80,
     imageMaxSize: 2000,
-    includeAvif: true,
-    includeBmp: true,
-    includePng: true,
-    includeJpg: true,
-    includeGif: true,
-    includeWebp: false,
+    includeImageAvif: true,
+    includeImageBmp: true,
+    includeImagePng: true,
+    includeImageJpg: true,
+    includeImageGif: true,
+    includeAudioWebp: false,
     outputImageFormat: "webp",
+
     videoMaxSize: 2000,
     videoBitrateForVideo: 2000, // k
     audioBitrateForVideo: 32, // k
-    includeMp4: true,
-    includeMkv: true,
-    includeMov: true,
-    includeWebm: false,
-    outputVideoFormat: "webm"
+    includeVideoMp4: true,
+    includeVideoMkv: true,
+    includeVideoMov: true,
+    includeVideoWebm: false,
+    outputVideoFormat: "webm",
+
+    audioBitrateForAudio: 32, // k
+    includeAudioFlac: true,
+    includeAudioWav: true,
+    includeAudioM4a: true,
+    includeAudioMp3: true,
+    includeAudioWebm: false,
+    outputAudioFormat: "webm",
 };
 
 export class SettingTab extends PluginSettingTab
@@ -173,73 +192,73 @@ export class SettingTab extends PluginSettingTab
         });
         new Setting(this.containerEl)
             .setName("Include AVIF")
-            .setDesc(`Include all avif files formats (${AvifExtensions.join(", ")})`)
+            .setDesc(`Include all avif files formats (${AvifImageExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
-                    .setValue(this.plugin.settings.includeAvif)
+                    .setValue(this.plugin.settings.includeImageAvif)
                     .onChange(async (value) =>
                     {
-                        this.plugin.settings.includeAvif = value;
+                        this.plugin.settings.includeImageAvif = value;
                         await this.plugin.saveSettings();
                     }),
             );
         new Setting(this.containerEl)
             .setName("Include BMP")
-            .setDesc(`Include all bmp files formats (${BmpExtensions.join(", ")})`)
+            .setDesc(`Include all bmp files formats (${BmpImageExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
-                    .setValue(this.plugin.settings.includeBmp)
+                    .setValue(this.plugin.settings.includeImageBmp)
                     .onChange(async (value) =>
                     {
-                        this.plugin.settings.includeBmp = value;
+                        this.plugin.settings.includeImageBmp = value;
                         await this.plugin.saveSettings();
                     }),
             );
         new Setting(this.containerEl)
             .setName("Include PNG")
-            .setDesc(`Include all png files formats (${PngExtensions.join(", ")})`)
+            .setDesc(`Include all png files formats (${PngImageExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
-                    .setValue(this.plugin.settings.includePng)
+                    .setValue(this.plugin.settings.includeImagePng)
                     .onChange(async (value) =>
                     {
-                        this.plugin.settings.includePng = value;
+                        this.plugin.settings.includeImagePng = value;
                         await this.plugin.saveSettings();
                     }),
             );
         new Setting(this.containerEl)
             .setName("Include JPG")
-            .setDesc(`Include all jpg files formats (${JpgExtensions.join(", ")})`)
+            .setDesc(`Include all jpg files formats (${JpgImageExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
-                    .setValue(this.plugin.settings.includeJpg)
+                    .setValue(this.plugin.settings.includeImageJpg)
                     .onChange(async (value) =>
                     {
-                        this.plugin.settings.includeJpg = value;
+                        this.plugin.settings.includeImageJpg = value;
                         await this.plugin.saveSettings();
                     }),
             );
         new Setting(this.containerEl)
             .setName("Include GIF")
-            .setDesc(`Include all gif files formats (${GifExtensions.join(", ")})`)
+            .setDesc(`Include all gif files formats (${GifImageExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
-                    .setValue(this.plugin.settings.includeGif)
+                    .setValue(this.plugin.settings.includeImageGif)
                     .onChange(async (value) =>
                     {
-                        this.plugin.settings.includeGif = value;
+                        this.plugin.settings.includeImageGif = value;
                         await this.plugin.saveSettings();
                     }),
             );
         new Setting(this.containerEl)
             .setName("Include WEBP")
-            .setDesc(`Include all webp files formats (${WebpExtensions.join(", ")})`)
+            .setDesc(`Include all webp files formats (${WebpImageExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
-                    .setValue(this.plugin.settings.includeWebp)
+                    .setValue(this.plugin.settings.includeAudioWebp)
                     .onChange(async (value) =>
                     {
-                        this.plugin.settings.includeWebp = value;
+                        this.plugin.settings.includeAudioWebp = value;
                         await this.plugin.saveSettings();
                     }),
             );
@@ -320,49 +339,156 @@ export class SettingTab extends PluginSettingTab
         });
         new Setting(this.containerEl)
             .setName("Include MP4")
-            .setDesc(`Include all mp4 files formats (${Mp4Extensions.join(", ")})`)
+            .setDesc(`Include all mp4 files formats (${Mp4VideoExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
-                    .setValue(this.plugin.settings.includeMp4)
+                    .setValue(this.plugin.settings.includeVideoMp4)
                     .onChange(async (value) =>
                     {
-                        this.plugin.settings.includeMp4 = value;
+                        this.plugin.settings.includeVideoMp4 = value;
                         await this.plugin.saveSettings();
                     }),
             );
         new Setting(this.containerEl)
             .setName("Include MKV")
-            .setDesc(`Include all mkv files formats (${MkvExtensions.join(", ")})`)
+            .setDesc(`Include all mkv files formats (${MkvVideoExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
-                    .setValue(this.plugin.settings.includeMkv)
+                    .setValue(this.plugin.settings.includeVideoMkv)
                     .onChange(async (value) =>
                     {
-                        this.plugin.settings.includeMkv = value;
+                        this.plugin.settings.includeVideoMkv = value;
                         await this.plugin.saveSettings();
                     }),
             );
         new Setting(this.containerEl)
             .setName("Include MOV")
-            .setDesc(`Include all mov files formats (${MovExtensions.join(", ")})`)
+            .setDesc(`Include all mov files formats (${MovVideoExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
-                    .setValue(this.plugin.settings.includeMov)
+                    .setValue(this.plugin.settings.includeVideoMov)
                     .onChange(async (value) =>
                     {
-                        this.plugin.settings.includeMov = value;
+                        this.plugin.settings.includeVideoMov = value;
                         await this.plugin.saveSettings();
                     }),
             );
         new Setting(this.containerEl)
             .setName("Include WEBM")
-            .setDesc(`Include all webm files formats (${WebmExtensions.join(", ")})`)
+            .setDesc(`Include all webm files formats (${WebmVideoExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
-                    .setValue(this.plugin.settings.includeWebm)
+                    .setValue(this.plugin.settings.includeVideoWebm)
                     .onChange(async (value) =>
                     {
-                        this.plugin.settings.includeWebm = value;
+                        this.plugin.settings.includeVideoWebm = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
+    }
+
+    displayAudioSettings()
+    {
+        this.containerEl.createEl("h1", {
+            text: "Audio Settings",
+        });
+        new Setting(this.containerEl)
+            .setName("Output audio format")
+            .setDesc("Select the output format of the audios. Webm is the most performent image format as it is the most space efficient")
+            .addDropdown(text =>
+                text
+                    .addOptions(
+                        AudioExtensions.reduce(
+                            (acc, curr) =>
+                            {
+                                acc[curr] = curr;
+                                return acc;
+                            }, {} as { [key: string]: string }
+                        )
+                    )
+                    .setValue(this.plugin.settings.outputAudioFormat)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.outputAudioFormat = value.trim();
+                        await this.plugin.saveSettings();
+                    }),
+            );
+
+        new Setting(this.containerEl)
+            .setName("Audio bitrate of an audio")
+            .setDesc("Specify the audio bitrate of an audio. The value is in Kbit/s")
+            .addSlider(slider =>
+                slider
+                    .setLimits(5, 1000, 5)
+                    .setValue(this.plugin.settings.audioBitrateForAudio)
+                    .setDynamicTooltip()
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.audioBitrateForAudio = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
+
+        this.containerEl.createEl("h3", {
+            text: "Audio formats",
+        });
+        new Setting(this.containerEl)
+            .setName("Include MP3")
+            .setDesc(`Include all mp3 files formats (${Mp3AudioExtensions.join(", ")})`)
+            .addToggle(toggle =>
+                toggle
+                    .setValue(this.plugin.settings.includeAudioMp3)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.includeAudioMp3 = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
+        new Setting(this.containerEl)
+            .setName("Include WAV")
+            .setDesc(`Include all wav files formats (${WavAudioExtensions.join(", ")})`)
+            .addToggle(toggle =>
+                toggle
+                    .setValue(this.plugin.settings.includeAudioWav)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.includeAudioWav = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
+        new Setting(this.containerEl)
+            .setName("Include M4A")
+            .setDesc(`Include all m4a files formats (${M4aAudioExtensions.join(", ")})`)
+            .addToggle(toggle =>
+                toggle
+                    .setValue(this.plugin.settings.includeAudioM4a)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.includeAudioM4a = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
+        new Setting(this.containerEl)
+            .setName("Include FLAC")
+            .setDesc(`Include all flac files formats (${FlacAudioExtensions.join(", ")})`)
+            .addToggle(toggle =>
+                toggle
+                    .setValue(this.plugin.settings.includeAudioFlac)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.includeAudioFlac = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
+        new Setting(this.containerEl)
+            .setName("Include WEBM")
+            .setDesc(`Include all webm files formats (${WebmAudioExtensions.join(", ")})`)
+            .addToggle(toggle =>
+                toggle
+                    .setValue(this.plugin.settings.includeAudioWebm)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.includeAudioWebm = value;
                         await this.plugin.saveSettings();
                     }),
             );
@@ -374,5 +500,6 @@ export class SettingTab extends PluginSettingTab
         this.displayGeneralSettings();
         this.displayImageSettings();
         this.displayVideoSettings();
+        this.displayAudioSettings();
     }
 }

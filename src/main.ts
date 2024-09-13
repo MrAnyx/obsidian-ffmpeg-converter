@@ -5,12 +5,7 @@ import { DefaultSettings, SettingTab, SettingType } from "./settings";
 import FileEntry from "./fileEntry";
 import PathFinder from "./pathFinder";
 import FfmpegUtility from "./ffmpegUtility";
-import { AvifExtensions, BmpExtensions, GifExtensions, JpgExtensions, MkvExtensions, MovExtensions, Mp4Extensions, PngExtensions, Type, WebmExtensions, WebpExtensions } from "./formats";
-
-/**
- * TODO Improve algo
- * TODO Command to cleanup when error
- */
+import { AvifImageExtensions, BmpImageExtensions, FlacAudioExtensions, GifImageExtensions, JpgImageExtensions, M4aAudioExtensions, MkvVideoExtensions, MovVideoExtensions, Mp3AudioExtensions, Mp4VideoExtensions, PngImageExtensions, Type, WavAudioExtensions, WebmAudioExtensions, WebmVideoExtensions, WebpImageExtensions } from "./formats";
 
 export default class FfmpegCompressPlugin extends Plugin
 {
@@ -23,36 +18,47 @@ export default class FfmpegCompressPlugin extends Plugin
             .filter(f =>
                 [
                     // Images
-                    ...(this.settings.includeAvif ? AvifExtensions : []),
-                    ...(this.settings.includeBmp ? BmpExtensions : []),
-                    ...(this.settings.includePng ? PngExtensions : []),
-                    ...(this.settings.includeJpg ? JpgExtensions : []),
-                    ...(this.settings.includeGif ? GifExtensions : []),
-                    ...(this.settings.includeWebp ? WebpExtensions : []),
+                    ...(this.settings.includeImageAvif ? AvifImageExtensions : []),
+                    ...(this.settings.includeImageBmp ? BmpImageExtensions : []),
+                    ...(this.settings.includeImagePng ? PngImageExtensions : []),
+                    ...(this.settings.includeImageJpg ? JpgImageExtensions : []),
+                    ...(this.settings.includeImageGif ? GifImageExtensions : []),
+                    ...(this.settings.includeAudioWebp ? WebpImageExtensions : []),
 
                     // Video
-                    ...(this.settings.includeMp4 ? Mp4Extensions : []),
-                    ...(this.settings.includeMkv ? MkvExtensions : []),
-                    ...(this.settings.includeMov ? MovExtensions : []),
-                    ...(this.settings.includeWebm ? WebmExtensions : []),
+                    ...(this.settings.includeVideoMp4 ? Mp4VideoExtensions : []),
+                    ...(this.settings.includeVideoMkv ? MkvVideoExtensions : []),
+                    ...(this.settings.includeVideoMov ? MovVideoExtensions : []),
+                    ...(this.settings.includeVideoWebm ? WebmVideoExtensions : []),
+
+                    // Audio
+                    ...(this.settings.includeAudioMp3 ? Mp3AudioExtensions : []),
+                    ...(this.settings.includeAudioWav ? WavAudioExtensions : []),
+                    ...(this.settings.includeAudioM4a ? M4aAudioExtensions : []),
+                    ...(this.settings.includeAudioFlac ? FlacAudioExtensions : []),
+                    ...(this.settings.includeAudioWebm ? WebmAudioExtensions : []),
                 ].includes(f.extension),
             );
     }
 
-    getNewFileExtension(file: FileEntry)
+    async getNewFileExtension(file: FileEntry)
     {
-        switch (file.type)
+        const fileType = await file.getFileType();
+
+        switch (fileType)
         {
             case Type.image:
                 return this.settings.outputImageFormat;
             case Type.video:
                 return this.settings.outputVideoFormat;
+            case Type.audio:
+                return this.settings.outputAudioFormat;
             default:
                 throw new Error(`Unsupported file type ${file.extension}`);
         }
     }
 
-    generateWorkFiles(file: TFile)
+    async generateWorkFiles(file: TFile)
     {
         // Unique must not contains "_" because it is used to separate the file name, the extension and the unique id.
         const nanoid = customAlphabet("0123456789abcdefghijklmnopkrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
@@ -66,7 +72,7 @@ export default class FfmpegCompressPlugin extends Plugin
         });
 
         const newFile = new FileEntry(file, {
-            extension: this.getNewFileExtension(originalFile),
+            extension: await this.getNewFileExtension(originalFile),
 
             // Update the name to make it unique if overwrite is disabled
             ...(!this.settings.overwrite ? { name: `${originalFile.name}_${uniqueId}` } : {})
@@ -91,11 +97,15 @@ export default class FfmpegCompressPlugin extends Plugin
 
         const ffmpeg = new FfmpegUtility(
             ffmpegPath,
+
             this.settings.imageQuality,
             this.settings.imageMaxSize,
+
             this.settings.videoBitrateForVideo,
             this.settings.audioBitrateForVideo,
             this.settings.videoMaxSize,
+
+            this.settings.audioBitrateForAudio
         );
 
         const files = this.getFilesToConvert();
@@ -119,7 +129,7 @@ export default class FfmpegCompressPlugin extends Plugin
                     progressNotice = new Notice(`Processing file ${fileIndex}/${files.length} (${f.name})`, 0);
                 }
 
-                const { originalFile, newFile, tmpFile } = this.generateWorkFiles(f);
+                const { originalFile, newFile, tmpFile } = await this.generateWorkFiles(f);
 
                 try
                 {

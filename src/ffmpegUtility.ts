@@ -13,7 +13,9 @@ export default class FfmpegUtility
     private audioBitrateForVideo: number;
     private videoMaxSize: number;
 
-    constructor(ffmpegPath: string, imageQuality: number, imageMaxSize: number, videoBitrateForVideo: number, audioBitrateForVideo: number, videoMaxSize: number)
+    private audioBitrateForAudio: number;
+
+    constructor(ffmpegPath: string, imageQuality: number, imageMaxSize: number, videoBitrateForVideo: number, audioBitrateForVideo: number, videoMaxSize: number, audioBitrateForAudio: number)
     {
         this.ffmpegPath = ffmpegPath;
 
@@ -23,6 +25,8 @@ export default class FfmpegUtility
         this.videoBitrateForVideo = videoBitrateForVideo;
         this.audioBitrateForVideo = audioBitrateForVideo;
         this.videoMaxSize = videoMaxSize;
+
+        this.audioBitrateForAudio = audioBitrateForAudio;
     }
 
     private imageCommand()
@@ -61,6 +65,14 @@ export default class FfmpegUtility
         ;
     }
 
+    private audioCommand()
+    {
+        // ffmpeg -i input.mp3  -b:a {audioBitrate} output.wav
+        return ffmpeg()
+            .audioBitrate(`${this.audioBitrateForAudio}k`)
+        ;
+    }
+
     public async convert(inputFile: FileEntry, outputFile: FileEntry)
     {
         await new Promise((resolve, reject) =>
@@ -74,6 +86,9 @@ export default class FfmpegUtility
                     break;
                 case Type.video:
                     command = this.videoCommand();
+                    break;
+                case Type.audio:
+                    command = this.audioCommand();
                     break;
                 default:
                     reject(`Unknown format ${outputFile.extension}`);
