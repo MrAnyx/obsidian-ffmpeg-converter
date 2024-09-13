@@ -25,6 +25,7 @@ The conversion of your assets is optimized thanks to FFMPEG, a powerful open-sou
 -   Mp4
 -   Mkv
 -   Mov
+-   Ogv
 -   Webm
 
 ### Audio
