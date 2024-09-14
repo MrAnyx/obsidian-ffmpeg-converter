@@ -86,7 +86,7 @@ export class SettingTab extends PluginSettingTab
     displayGeneralSettings()
     {
         this.containerEl.createEl("h1", {
-            text: "General Settings",
+            text: "General",
         });
         new Setting(this.containerEl)
             .setName("Ffmpeg path")
@@ -133,7 +133,7 @@ export class SettingTab extends PluginSettingTab
     displayImageSettings()
     {
         this.containerEl.createEl("h1", {
-            text: "Image Settings",
+            text: "Image",
         });
         new Setting(this.containerEl)
             .setName("Output image format")
@@ -267,7 +267,7 @@ export class SettingTab extends PluginSettingTab
     displayVideoSettings()
     {
         this.containerEl.createEl("h1", {
-            text: "Video Settings",
+            text: "Video",
         });
         new Setting(this.containerEl)
             .setName("Output video format")
@@ -370,6 +370,18 @@ export class SettingTab extends PluginSettingTab
                     .onChange(async (value) =>
                     {
                         this.plugin.settings.includeVideoMov = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
+        new Setting(this.containerEl)
+            .setName("Include OGV")
+            .setDesc(`Include all ogv files formats (${OgvExtensions.join(", ")})`)
+            .addToggle(toggle =>
+                toggle
+                    .setValue(this.plugin.settings.includeOgv)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.includeOgv = value;
                         await this.plugin.saveSettings();
                     }),
             );
