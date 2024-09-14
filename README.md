@@ -2,7 +2,7 @@
 
 Optimize your vault space by converting your images, video and audio into a more compact format or with reduced quality.
 
-Most users can redice the size of their vault by 70%.
+Most users can reduce the size of their vault by 70%.
 
 The conversion of your assets is optimized thanks to FFMPEG, a powerful open-source tool.
 
