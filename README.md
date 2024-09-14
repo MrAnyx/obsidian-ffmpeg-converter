@@ -10,27 +10,11 @@ The conversion of your assets is optimized thanks to FFMPEG, a powerful open-sou
 
 ## Supported formated
 
-### Image
+**Image** : `.avif`, `.bmp`, `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`
 
--   Avif
--   Bmp
--   Png
--   Jpg
--   Jpeg
--   Gif
--   Webp
+**Video** : `.mp4`, `.mkv`, `.mov`, `.ogv`, `.webm`
 
-### Video
-
--   Mp4
--   Mkv
--   Mov
--   Ogv
--   Webm
-
-### Audio
-
-Not available yet
+**Audio** : Not available yet
 
 ## Requirements
 
