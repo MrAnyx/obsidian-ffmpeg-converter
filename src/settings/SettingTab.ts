@@ -1,83 +1,12 @@
 import { PluginSettingTab, App, Setting } from "obsidian";
-import FfmpegCompressPlugin from "./main";
-import { AudioExtensions, AvifImageExtensions, BmpImageExtensions, FlacAudioExtensions, GifImageExtensions, ImageExtensions, JpgImageExtensions, M4aAudioExtensions, MkvVideoExtensions, MovVideoExtensions, Mp3AudioExtensions, Mp4VideoExtensions, PngImageExtensions, VideoExtensions, WavAudioExtensions, WebmAudioExtensions, WebmVideoExtensions, WebpImageExtensions } from "./formats";
-
-export interface SettingType
-{
-    // General
-    customFfmpegPath: string;
-    overwrite: boolean;
-    uniqueIdLength: number;
-
-    // Image
-    imageQuality: number;
-    imageMaxSize: number;
-    includeImageAvif: boolean;
-    includeImageBmp: boolean;
-    includeImagePng: boolean;
-    includeImageJpg: boolean;
-    includeImageGif: boolean;
-    includeAudioWebp: boolean;
-    outputImageFormat: string;
-
-    // Video
-    videoMaxSize: number;
-    videoBitrateForVideo: number;
-    audioBitrateForVideo: number;
-    includeVideoMp4: boolean;
-    includeVideoMkv: boolean;
-    includeVideoMov: boolean;
-    includeVideoWebm: boolean;
-    outputVideoFormat: string;
-
-    // Audio
-    audioBitrateForAudio: number;
-    includeAudioFlac: boolean;
-    includeAudioWav: boolean;
-    includeAudioM4a: boolean;
-    includeAudioMp3: boolean;
-    includeAudioWebm: boolean;
-    outputAudioFormat: string;
-}
-
-export const DefaultSettings: SettingType = {
-    customFfmpegPath: "",
-    overwrite: true,
-    uniqueIdLength: 20,
-
-    imageQuality: 80,
-    imageMaxSize: 2000,
-    includeImageAvif: true,
-    includeImageBmp: true,
-    includeImagePng: true,
-    includeImageJpg: true,
-    includeImageGif: true,
-    includeAudioWebp: false,
-    outputImageFormat: "webp",
-
-    videoMaxSize: 2000,
-    videoBitrateForVideo: 2000, // k
-    audioBitrateForVideo: 32, // k
-    includeVideoMp4: true,
-    includeVideoMkv: true,
-    includeVideoMov: true,
-    includeVideoWebm: false,
-    outputVideoFormat: "webm",
-
-    audioBitrateForAudio: 32, // k
-    includeAudioFlac: true,
-    includeAudioWav: true,
-    includeAudioM4a: true,
-    includeAudioMp3: true,
-    includeAudioWebm: false,
-    outputAudioFormat: "webm",
-};
+import { AudioExtensions, AvifImageExtensions, BmpImageExtensions, FlacAudioExtensions, GifImageExtensions, ImageExtensions, JpgImageExtensions, M4aAudioExtensions, MkvVideoExtensions, MovVideoExtensions, Mp3AudioExtensions, Mp4VideoExtensions, OgvVideoExtensions, PngImageExtensions, VideoExtensions, WavAudioExtensions, WebmAudioExtensions, WebmVideoExtensions, WebpImageExtensions } from "src/formats";
+import Main from "src/main";
 
 export class SettingTab extends PluginSettingTab
 {
-    plugin: FfmpegCompressPlugin;
+    plugin: Main;
 
-    constructor(app: App, plugin: FfmpegCompressPlugin)
+    constructor(app: App, plugin: Main)
     {
         super(app, plugin);
         this.plugin = plugin;
@@ -375,13 +304,13 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include OGV")
-            .setDesc(`Include all ogv files formats (${OgvExtensions.join(", ")})`)
+            .setDesc(`Include all ogv files formats (${OgvVideoExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
-                    .setValue(this.plugin.settings.includeOgv)
+                    .setValue(this.plugin.settings.includeVideoOgv)
                     .onChange(async (value) =>
                     {
-                        this.plugin.settings.includeOgv = value;
+                        this.plugin.settings.includeVideoOgv = value;
                         await this.plugin.saveSettings();
                     }),
             );

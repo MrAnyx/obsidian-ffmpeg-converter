@@ -10,11 +10,13 @@ The conversion of your assets is optimized thanks to FFMPEG, a powerful open-sou
 
 ## Supported formated
 
+Files supported by this plugin are the save as the [accepted files from Obsidian](https://help.obsidian.md/Files+and+folders/Accepted+file+formats).
+
 **Image** : `.avif`, `.bmp`, `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`
 
 **Video** : `.mp4`, `.mkv`, `.mov`, `.ogv`, `.webm`
 
-**Audio** : Not available yet
+**Audio** : `.flac`, `.m4a`, `.mp3`, `.ogg`, `.wav`, `.webm`, `.3gp`
 
 ## Requirements
 
@@ -25,6 +27,10 @@ To use this plugin, you must install FFMPEG >= 0.9. Any newer version will work 
 To install this plugin, simply go to the officiel plugin store from Obsidian and search for **Ffmpeg Converter**.
 
 You must install [FFMPEG](https://ffmpeg.org/download.html) first in order to use this plugin properly. Once downloaded, simply add the `bin` folder of FFMPEG to your environment variables and you're good to go !
+
+## Rollback image in case of error
+
+Not available yet
 
 ## Manually installing the plugin
 

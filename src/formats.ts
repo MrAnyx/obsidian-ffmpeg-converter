@@ -6,49 +6,32 @@ export const Type: Record<Type, Type> = {
     unknown: "unknown"
 };
 
-export const AvifImageExtensions = ["avif"];
-export const BmpImageExtensions = ["bmp"];
-export const PngImageExtensions = ["png"];
-export const JpgImageExtensions = ["jpg", "jpeg"];
-export const GifImageExtensions = ["gif"];
-export const WebpImageExtensions = ["webp"];
-export const ImageExtensions = [
-    ...AvifImageExtensions,
-    ...BmpImageExtensions,
-    ...PngImageExtensions,
-    ...JpgImageExtensions,
-    ...GifImageExtensions,
-    ...WebpImageExtensions
-];
+export type ImageType = "avif" | "bmp" | "png" | "jpg" | "gif" | "webp";
+export const ImageExtensions: Record<ImageType, string[]> = {
+    avif: ["avif"],
+    bmp: ["bmp"],
+    png: ["png"],
+    jpg: ["jpg", "jpeg"],
+    gif: ["gif"],
+    webp: ["webp"],
+};
 
-export const Mp4VideoExtensions = ["mp4"];
-export const MkvVideoExtensions = ["mkv"];
-export const MovVideoExtensions = ["mov"];
-export const WebmVideoExtensions = ["webm"];
-export const VideoExtensions = [
-    ...Mp4VideoExtensions,
-    ...MkvVideoExtensions,
-    ...MovVideoExtensions,
-    ...WebmVideoExtensions,
-];
+export type VideoType = "mp4" | "mkv" | "mov" | "ogv" | "webm";
+export const VideoExtensions: Record<VideoType, string[]> = {
+    mp4: ["mp4"],
+    mkv: ["mkv"],
+    mov: ["mov"],
+    ogv: ["ogv"],
+    webm: ["webm"],
+};
 
-export const Mp3AudioExtensions = ["mp3"];
-export const WavAudioExtensions = ["wav"];
-export const M4aAudioExtensions = ["m4a"];
-export const FlacAudioExtensions = ["flac"];
-export const WebmAudioExtensions = ["webm"];
-export const AudioExtensions = [
-    ...Mp3AudioExtensions,
-    ...WavAudioExtensions,
-    ...M4aAudioExtensions,
-    ...FlacAudioExtensions,
-    ...WebmAudioExtensions,
-];
-
-export const Extensions = [
-    ...ImageExtensions,
-    ...VideoExtensions,
-    ...AudioExtensions
-];
-
-export const DuplicatFormats = Extensions.filter((item, index) => Extensions.indexOf(item) !== index);
+export type AudioType = "mp3" | "wav" | "m4a" | "flac" | "webm" | "ogg" | "3gp";
+export const AudioExtensions: Record<AudioType, string[]> = {
+    mp3: ["mp3"],
+    wav: ["wav"],
+    m4a: ["m4a"],
+    flac: ["flac"],
+    webm: ["webm"],
+    ogg: ["ogg"],
+    "3gp": ["3gp"],
+};
