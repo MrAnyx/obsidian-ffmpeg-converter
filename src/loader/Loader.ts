@@ -7,7 +7,7 @@ export default class Loader
     protected app: App;
     protected extensions: string[];
     protected filterCallback: ((arg: TFile) => boolean | Promise<boolean>) | undefined;
-    protected type: Type;
+    public type: Type;
 
     constructor(app: App, type: Type, extensions: string[], filterCallback?: (arg: TFile) => boolean | Promise<boolean>)
     {
@@ -20,19 +20,19 @@ export default class Loader
     async getFiles(): Promise<File[]>
     {
         const files = this.app.vault.getFiles();
+        const result: File[] = [];
 
-        const filteredFiles = await Promise.all(
-            files.map(async (f) =>
+        for (const f of files)
+        {
+            const extensionIncluded = this.extensions.includes(f.extension);
+            const filterCallbackResult = this.filterCallback ? await this.filterCallback(f) : true;
+
+            if (extensionIncluded && filterCallbackResult)
             {
-                const extensionIncluded = this.extensions.includes(f.extension);
-                const filterCallbackResult = this.filterCallback ? await this.filterCallback(f) : true;
+                result.push(new File(f, this.type));
+            }
+        }
 
-                return extensionIncluded && filterCallbackResult ? f : null;
-            })
-        );
-
-        return filteredFiles
-            .filter((file): file is TFile => file !== null)
-            .map(f => new File(f, this.type));
+        return result;
     }
 }

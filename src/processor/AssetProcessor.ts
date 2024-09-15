@@ -1,13 +1,15 @@
-import { App } from "obsidian";
+import { App, Notice } from "obsidian";
+import { ConverterFactory } from "src/converter/ConverterFactory";
 import File from "src/files/File";
 import { ImageExtensions, VideoExtensions, AudioExtensions, Type } from "src/formats";
-import AudioLoader from "src/loaders/AudioLoader";
-import ImageLoader from "src/loaders/ImageLoader";
-import Loader from "src/loaders/Loader";
-import VideoLoader from "src/loaders/VideoLoader";
-import { SettingType } from "src/settings/SettingType";
-import { findPath } from "src/utils/pathFinder";
-import { generateUniqueId } from "src/utils/uniqueId";
+import AudioLoader from "src/loader/AudioLoader";
+import ImageLoader from "src/loader/ImageLoader";
+import Loader from "src/loader/Loader";
+import VideoLoader from "src/loader/VideoLoader";
+import { SettingType } from "src/setting/SettingType";
+import { findPath } from "src/utils/PathFinder";
+import { generateUniqueId } from "src/utils/UniqueId";
+import fs from "fs";
 
 export default class AssetProcessor
 {
@@ -19,6 +21,7 @@ export default class AssetProcessor
     {
         this.app = app;
         this.settings = settings;
+
         this.loaders = [
             new ImageLoader(this.app, [
                 ...(this.settings.includeImageAvif ? ImageExtensions.avif : []),
@@ -32,17 +35,17 @@ export default class AssetProcessor
                 ...(this.settings.includeVideoMp4 ? VideoExtensions.mp4 : []),
                 ...(this.settings.includeVideoMkv ? VideoExtensions.mkv : []),
                 ...(this.settings.includeVideoMov ? VideoExtensions.mov : []),
-                ...(this.settings.includeVideoWebm ? VideoExtensions.webm : []),
                 ...(this.settings.includeVideoOgv ? VideoExtensions.ogv : []),
+                ...(this.settings.includeVideoWebm ? VideoExtensions.webm : []),
             ]),
             new AudioLoader(this.app, [
-                ...(this.settings.includeAudioFlac ? AudioExtensions.flac : []),
+                ...(this.settings.includeAudioMp3 ? AudioExtensions.mp3 : []),
                 ...(this.settings.includeAudioWav ? AudioExtensions.wav : []),
                 ...(this.settings.includeAudioM4a ? AudioExtensions.m4a : []),
-                ...(this.settings.includeAudioMp3 ? AudioExtensions.mp3 : []),
-                ...(this.settings.includeAudioWebm ? AudioExtensions.webm : []),
+                ...(this.settings.includeAudioFlac ? AudioExtensions.flac : []),
                 ...(this.settings.includeAudioOgg ? AudioExtensions.ogg : []),
                 ...(this.settings.includeAudio3gp ? AudioExtensions["3gp"] : []),
+                ...(this.settings.includeAudioWebm ? AudioExtensions.webm : []),
             ]),
         ];
     }
@@ -81,9 +84,8 @@ export default class AssetProcessor
         });
 
         return {
-            originalFile: file,
-            tmpFile,
-            newFile
+            newFile,
+            tmpFile
         };
     }
 
@@ -91,8 +93,6 @@ export default class AssetProcessor
     {
         for (const loader of this.loaders)
         {
-            // const files = await loader.getFiles();
-
             const ffmpegPath = await findPath("ffmpeg", this.settings.customFfmpegPath.trim());
 
             if (ffmpegPath === undefined)
@@ -101,22 +101,11 @@ export default class AssetProcessor
                 return;
             }
 
-            const ffmpeg = new FfmpegUtility(
-                ffmpegPath,
+            const files = await loader.getFiles();
 
-                this.settings.imageQuality,
-                this.settings.imageMaxSize,
+            new Notice(`Found ${files.length} files to convert of type ${loader.type}`);
 
-                this.settings.videoBitrateForVideo,
-                this.settings.audioBitrateForVideo,
-                this.settings.videoMaxSize,
-
-                this.settings.audioBitrateForAudio
-            );
-
-            const files = this.getFilesToConvert();
-
-            new Notice(`Found ${files.length} files to convert`);
+            const converter = ConverterFactory.createConverter(loader.type, ffmpegPath, this.settings);
 
             if (files.length > 0)
             {
@@ -124,18 +113,18 @@ export default class AssetProcessor
                 let progressNotice: Notice | undefined;
 
                 // Use of traditional for of to prevent file conflict in async programming
-                for (const f of files)
+                for (const originalFile of files)
                 {
                     if (progressNotice)
                     {
-                        progressNotice.setMessage(`Processing file ${fileIndex}/${files.length} (${f.name})`);
+                        progressNotice.setMessage(`Processing file ${fileIndex}/${files.length} (${originalFile.name})`);
                     }
                     else
                     {
-                        progressNotice = new Notice(`Processing file ${fileIndex}/${files.length} (${f.name})`, 0);
+                        progressNotice = new Notice(`Processing file ${fileIndex}/${files.length} (${originalFile.name})`, 0);
                     }
 
-                    const { originalFile, newFile, tmpFile } = await this.generateWorkFiles(f);
+                    const { newFile, tmpFile } = await this.generateWorkFiles(originalFile);
 
                     try
                     {
@@ -154,17 +143,17 @@ export default class AssetProcessor
                         await this.app.vault.adapter.remove(newFile.getVaultPathWithExtension());
 
                         // Convert to new format using ffmpeg
-                        await ffmpeg.convert(tmpFile, newFile);
+                        await converter.convert(tmpFile, newFile);
 
                         // Remove temporary file
                         await this.app.vault.adapter.remove(tmpFile.getVaultPathWithExtension());
 
                         fileIndex++;
                     }
-                    catch (e: any)
+                    catch (e: unknown)
                     {
                         new Notice("An error occured, please check the developer console for more details (Ctrl+Shift+I for Windows or Linux or Cmd+Shift+I for Mac)");
-                        console.error(`An error occured. Check the validity of the file ${f.path}. You can delete all temporary files generated during the operation.`);
+                        console.error(`An error occured. Check the validity of the file ${originalFile.file.path}.`);
                         console.error(e);
                         break;
                     }

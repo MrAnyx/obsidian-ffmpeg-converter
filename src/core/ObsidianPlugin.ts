@@ -1,5 +1,5 @@
 import { Plugin } from "obsidian";
-import { DefaultSettings, SettingType } from "src/settings/SettingType";
+import { DefaultSettings, SettingType } from "src/setting/SettingType";
 
 export default abstract class ObsidianPlugin extends Plugin
 {

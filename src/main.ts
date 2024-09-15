@@ -1,7 +1,7 @@
 import { addIcon } from "obsidian";
-import { SettingTab } from "./settings/SettingTab";
+import { SettingTab } from "./setting/SettingTab";
 import ObsidianPlugin from "./core/ObsidianPlugin";
-import AssetProcessor from "./processor/FileProcessor";
+import AssetProcessor from "./processor/AssetProcessor";
 
 export default class Main extends ObsidianPlugin
 {

@@ -29,13 +29,13 @@ export interface SettingType
 
     // Audio
     audioBitrateForAudio: number;
-    includeAudioFlac: boolean;
+    includeAudioMp3: boolean;
     includeAudioWav: boolean;
     includeAudioM4a: boolean;
-    includeAudioMp3: boolean;
-    includeAudioWebm: boolean;
+    includeAudioFlac: boolean;
     includeAudioOgg: boolean;
     includeAudio3gp: boolean;
+    includeAudioWebm: boolean;
     outputAudioFormat: string;
 }
 
@@ -65,12 +65,12 @@ export const DefaultSettings: SettingType = {
     outputVideoFormat: "webm",
 
     audioBitrateForAudio: 32, // k
-    includeAudioFlac: true,
+    includeAudioMp3: true,
     includeAudioWav: true,
     includeAudioM4a: true,
-    includeAudioMp3: true,
     includeAudioOgg: true,
     includeAudio3gp: true,
+    includeAudioFlac: true,
     includeAudioWebm: false,
     outputAudioFormat: "webm",
 };
