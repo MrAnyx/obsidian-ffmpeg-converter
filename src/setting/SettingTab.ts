@@ -58,8 +58,7 @@ export class SettingTab extends PluginSettingTab
             .setDesc("Length of the unique id generate to make converted file different. This option is used only when the overwrite option is not toggled.")
             .addSlider(text =>
                 text
-                    .setDisabled(this.plugin.settings.overwrite)
-                    .setLimits(1, 100, 1)
+                    .setLimits(10, 100, 1)
                     .setDynamicTooltip()
                     .setValue(this.plugin.settings.uniqueIdLength)
                     .onChange(async (value) =>

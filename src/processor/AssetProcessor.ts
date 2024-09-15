@@ -4,22 +4,17 @@ import File from "src/files/File";
 import { ImageExtensions, VideoExtensions, AudioExtensions, Type } from "src/formats";
 import AudioLoader from "src/loader/AudioLoader";
 import ImageLoader from "src/loader/ImageLoader";
-import Loader from "src/loader/Loader";
 import VideoLoader from "src/loader/VideoLoader";
 import { SettingType } from "src/setting/SettingType";
 import { generateUniqueId } from "src/utils/UniqueId";
 import fs from "fs";
+import Processor from "./Processor";
 
-export default class AssetProcessor
+export default class AssetProcessor extends Processor
 {
-    private app: App;
-    private settings: SettingType;
-    private loaders: Loader[];
-
     constructor(app: App, settings: SettingType)
     {
-        this.app = app;
-        this.settings = settings;
+        super(app, settings);
 
         this.loaders = [
             new ImageLoader(this.app, [

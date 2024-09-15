@@ -35,3 +35,8 @@ export const AudioExtensions: Record<AudioType, string[]> = {
     "3gp": ["3gp"],
     webm: ["webm"],
 };
+
+export type TemporarType = "tmp";
+export const TemporaryExtensions: Record<TemporarType, string[]> = {
+    tmp: ["tmp"],
+};

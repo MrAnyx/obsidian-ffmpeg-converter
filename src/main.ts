@@ -4,6 +4,7 @@ import ObsidianPlugin from "./core/ObsidianPlugin";
 import AssetProcessor from "./processor/AssetProcessor";
 import FfmpegManager from "./utils/FfmpegManager";
 import { findPath } from "./utils/PathFinder";
+import RollbackProcessor from "./processor/RollbackProcessor";
 
 export default class Main extends ObsidianPlugin
 {
@@ -41,6 +42,12 @@ export default class Main extends ObsidianPlugin
         await processor.process();
     }
 
+    async rollback()
+    {
+        const processor = new RollbackProcessor(this.app, this.settings);
+        await processor.process();
+    }
+
     async onload()
     {
         await super.loadSettings();
@@ -60,6 +67,12 @@ export default class Main extends ObsidianPlugin
             id: "convert-images",
             name: "Convert images",
             callback: async () => await this.convertAssets(),
+        });
+
+        this.addCommand({
+            id: "rollback-temporary-files",
+            name: "Rollback temporary files",
+            callback: async () => await this.rollback(),
         });
 
         this.addSettingTab(new SettingTab(this.app, this));
