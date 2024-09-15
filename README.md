@@ -14,8 +14,6 @@ Files supported by this plugin are the save as the [accepted files from Obsidian
 
 **Image** : `.avif`, `.bmp`, `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`
 
-> Note that it will preserve the loop of `gif` files.
-
 **Video** : `.mp4`, `.mkv`, `.mov`, `.ogv`, `.webm`
 
 **Audio** : `.mp3`, `.wav`, `.m4a`, `.flac`, `.ogg`, `.3gp`, `.webm`
