@@ -233,13 +233,12 @@ export class SettingTab extends PluginSettingTab
                         await this.plugin.saveSettings();
                     }),
             );
-
         new Setting(this.containerEl)
             .setName("Video bitrate of a video")
             .setDesc("Specify the video bitrate of a video. The value is in Kbit/s")
             .addSlider(slider =>
                 slider
-                    .setLimits(100, 10000, 100)
+                    .setLimits(100, 4000, 100)
                     .setValue(this.plugin.settings.videoBitrateForVideo)
                     .setDynamicTooltip()
                     .onChange(async (value) =>
@@ -253,7 +252,7 @@ export class SettingTab extends PluginSettingTab
             .setDesc("Specify the audio bitrate of a video. The value is in Kbit/s")
             .addSlider(slider =>
                 slider
-                    .setLimits(5, 1000, 5)
+                    .setLimits(5, 200, 5)
                     .setValue(this.plugin.settings.audioBitrateForVideo)
                     .setDynamicTooltip()
                     .onChange(async (value) =>
@@ -262,7 +261,6 @@ export class SettingTab extends PluginSettingTab
                         await this.plugin.saveSettings();
                     }),
             );
-
         new Setting(this.containerEl)
             .setName("Output max size")
             .setDesc("Specify the max width of height of the output file")
@@ -277,6 +275,21 @@ export class SettingTab extends PluginSettingTab
                         await this.plugin.saveSettings();
                     }),
             );
+        new Setting(this.containerEl)
+            .setName("Frames per second")
+            .setDesc("Specify the max fps of the output file")
+            .addSlider(slider =>
+                slider
+                    .setLimits(1, 240, 1)
+                    .setValue(this.plugin.settings.videoFps)
+                    .setDynamicTooltip()
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.videoFps = value;
+                        await this.plugin.saveSettings();
+                    }),
+            );
+
         this.containerEl.createEl("h3", {
             text: "Video formats",
         });
@@ -376,7 +389,7 @@ export class SettingTab extends PluginSettingTab
             .setDesc("Specify the audio bitrate of an audio. The value is in Kbit/s")
             .addSlider(slider =>
                 slider
-                    .setLimits(5, 1000, 5)
+                    .setLimits(5, 200, 5)
                     .setValue(this.plugin.settings.audioBitrateForAudio)
                     .setDynamicTooltip()
                     .onChange(async (value) =>

@@ -9,6 +9,7 @@ export default class VideoConverter extends Converter
         const command = FfmpegManager.create()
             .videoBitrate(`${this.settings.videoBitrateForVideo}k`)
             .audioBitrate(`${this.settings.audioBitrateForVideo}k`)
+            .outputFPS(this.settings.videoFps)
             .filterGraph({
                 filter: "scale",
                 options: {

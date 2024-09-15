@@ -85,6 +85,8 @@ export default class AssetProcessor extends Processor
 
     async process()
     {
+        let progressNotice: Notice | undefined;
+
         for (const loader of this.loaders)
         {
             const files = await loader.getFiles();
@@ -99,7 +101,6 @@ export default class AssetProcessor extends Processor
             }
 
             let fileIndex = 1;
-            let progressNotice: Notice | undefined;
 
             // Use of traditional for of to prevent file conflict in async programming
             for (const originalFile of files)
@@ -146,8 +147,9 @@ export default class AssetProcessor extends Processor
                     break;
                 }
             }
-            new Notice("Ffmpeg conversion ended successfully");
-            setTimeout(() => (progressNotice as Notice).hide(), 3000);
         }
+
+        new Notice("Ffmpeg conversion ended successfully");
+        setTimeout(() => progressNotice?.hide(), 3000);
     }
 }

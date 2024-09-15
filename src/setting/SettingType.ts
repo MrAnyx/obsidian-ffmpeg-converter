@@ -21,6 +21,7 @@ export interface SettingType
     videoMaxSize: number;
     videoBitrateForVideo: number;
     audioBitrateForVideo: number;
+    videoFps: number;
     includeVideoMp4: boolean;
     includeVideoMkv: boolean;
     includeVideoMov: boolean;
@@ -59,6 +60,7 @@ export const DefaultSettings: SettingType = {
     videoMaxSize: 2000,
     videoBitrateForVideo: 2000, // k
     audioBitrateForVideo: 32, // k
+    videoFps: 60,
     includeVideoMp4: true,
     includeVideoMkv: true,
     includeVideoMov: true,
