@@ -1,21 +1,24 @@
-import Ffmpeg from "fluent-ffmpeg";
+import { FfprobeData } from "fluent-ffmpeg";
+import FfmpegManager from "./FfmpegManager";
 
 // Common method to get metadata using ffprobe
-const getMetadata = async (filePath: string): Promise<Ffmpeg.FfprobeData> =>
+const getMetadata = async (filePath: string): Promise<FfprobeData> =>
 {
     return new Promise((resolve, reject) =>
     {
-        Ffmpeg.ffprobe(filePath, (err, metadata) =>
-        {
-            if (err)
+        FfmpegManager.create()
+            .input(filePath)
+            .ffprobe((err, metadata) =>
             {
-                reject(err);
-            }
-            else
-            {
-                resolve(metadata);
-            }
-        });
+                if (err)
+                {
+                    reject(err);
+                }
+                else
+                {
+                    resolve(metadata);
+                }
+            });
     });
 };
 

@@ -10,11 +10,18 @@ export default class AudioLoader extends Loader
         super(app, Type.audio, extensions, f => this.isAudio(f));
     }
 
-    isAudio(f: TFile): boolean | Promise<boolean>
+    private async isAudio(f: TFile): Promise<boolean>
     {
         if (this.app.vault.adapter instanceof FileSystemAdapter)
         {
-            return hasAudioCodecOnly(this.app.vault.adapter.getFullPath(f.path));
+            try
+            {
+                return await hasAudioCodecOnly(this.app.vault.adapter.getFullPath(f.path));
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         return false;

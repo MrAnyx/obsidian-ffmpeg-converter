@@ -1,4 +1,4 @@
-import Ffmpeg from "fluent-ffmpeg";
+import FfmpegManager from "src/utils/FfmpegManager";
 import Converter from "./Converter";
 import File from "src/files/File";
 
@@ -6,7 +6,7 @@ export default class VideoConverter extends Converter
 {
     public async convert(inputFile: File, outputFile: File)
     {
-        const command = Ffmpeg()
+        const command = FfmpegManager.create()
             .videoBitrate(`${this.settings.videoBitrateForVideo}k`)
             .audioBitrate(`${this.settings.audioBitrateForVideo}k`)
             .filterGraph({

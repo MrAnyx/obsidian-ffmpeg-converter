@@ -19,9 +19,19 @@ export class SettingTab extends PluginSettingTab
         });
         new Setting(this.containerEl)
             .setName("Ffmpeg path")
-            .setDesc(
-                "Overwrite the default Ffmpeg path. Leave empty to use the ffmpeg binary from the environment variables. This setting will be used only if the ffmpeg binary isn't found on your system using the environment variables.",
-            )
+            .setDesc("Overwrite the default Ffmpeg path. Leave empty to use the ffmpeg binary from the environment variables. This setting will be used only if the ffmpeg binary isn't found on your system using the environment variables.")
+            .addText(text =>
+                text
+                    .setValue(this.plugin.settings.customFfmpegPath)
+                    .onChange(async (value) =>
+                    {
+                        this.plugin.settings.customFfmpegPath = value.trim();
+                        await this.plugin.saveSettings();
+                    }),
+            );
+        new Setting(this.containerEl)
+            .setName("Ffprobe path")
+            .setDesc("Overwrite the default Ffprobe path. Leave empty to use the ffprobe binary from the environment variables. This setting will be used only if the ffprobe binary isn't found on your system using the environment variables.")
             .addText(text =>
                 text
                     .setValue(this.plugin.settings.customFfmpegPath)

@@ -7,16 +7,16 @@ import { Type } from "src/formats";
 
 export class ConverterFactory
 {
-    static createConverter(fileType: Type, ffmpegPath: string, settings: SettingType): Converter
+    static createConverter(fileType: Type, settings: SettingType): Converter
     {
         switch (fileType)
         {
             case Type.image:
-                return new ImageConverter(ffmpegPath, settings);
+                return new ImageConverter(settings);
             case Type.video:
-                return new VideoConverter(ffmpegPath, settings);
+                return new VideoConverter(settings);
             case Type.audio:
-                return new AudioConverter(ffmpegPath, settings);
+                return new AudioConverter(settings);
             default:
                 throw new Error("Unsupported file type");
         }

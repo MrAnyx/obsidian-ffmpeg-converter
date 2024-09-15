@@ -10,11 +10,18 @@ export default class VideoLoader extends Loader
         super(app, Type.video, extensions, f => this.isVideo(f));
     }
 
-    private isVideo(f: TFile): boolean | Promise<boolean>
+    private async isVideo(f: TFile): Promise<boolean>
     {
         if (this.app.vault.adapter instanceof FileSystemAdapter)
         {
-            return hasVideoCodec(this.app.vault.adapter.getFullPath(f.path));
+            try
+            {
+                return await hasVideoCodec(this.app.vault.adapter.getFullPath(f.path));
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         return false;

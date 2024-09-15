@@ -1,12 +1,12 @@
-import Ffmpeg from "fluent-ffmpeg";
 import Converter from "./Converter";
 import File from "src/files/File";
+import FfmpegManager from "src/utils/FfmpegManager";
 
 export default class ImageConverter extends Converter
 {
     public async convert(inputFile: File, outputFile: File)
     {
-        const command = Ffmpeg()
+        const command = FfmpegManager.create()
             .outputOptions([
                 "-q:v", this.settings.imageQuality.toString(),
                 "-loop", "0"

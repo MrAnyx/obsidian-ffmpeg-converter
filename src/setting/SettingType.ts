@@ -2,6 +2,7 @@ export interface SettingType
 {
     // General
     customFfmpegPath: string;
+    customFfprobePath: string;
     overwrite: boolean;
     uniqueIdLength: number;
 
@@ -41,6 +42,7 @@ export interface SettingType
 
 export const DefaultSettings: SettingType = {
     customFfmpegPath: "",
+    customFfprobePath: "",
     overwrite: true,
     uniqueIdLength: 20,
 

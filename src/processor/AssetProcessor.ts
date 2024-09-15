@@ -7,7 +7,6 @@ import ImageLoader from "src/loader/ImageLoader";
 import Loader from "src/loader/Loader";
 import VideoLoader from "src/loader/VideoLoader";
 import { SettingType } from "src/setting/SettingType";
-import { findPath } from "src/utils/PathFinder";
 import { generateUniqueId } from "src/utils/UniqueId";
 import fs from "fs";
 
@@ -93,74 +92,67 @@ export default class AssetProcessor
     {
         for (const loader of this.loaders)
         {
-            const ffmpegPath = await findPath("ffmpeg", this.settings.customFfmpegPath.trim());
-
-            if (ffmpegPath === undefined)
-            {
-                new Notice("Ffmpeg is not installed on your system. Please check your environment variable or the settings path.");
-                return;
-            }
-
             const files = await loader.getFiles();
 
             new Notice(`Found ${files.length} files to convert of type ${loader.type}`);
 
-            const converter = ConverterFactory.createConverter(loader.type, ffmpegPath, this.settings);
+            const converter = ConverterFactory.createConverter(loader.type, this.settings);
 
-            if (files.length > 0)
+            if (files.length === 0)
             {
-                let fileIndex = 1;
-                let progressNotice: Notice | undefined;
-
-                // Use of traditional for of to prevent file conflict in async programming
-                for (const originalFile of files)
-                {
-                    if (progressNotice)
-                    {
-                        progressNotice.setMessage(`Processing file ${fileIndex}/${files.length} (${originalFile.name})`);
-                    }
-                    else
-                    {
-                        progressNotice = new Notice(`Processing file ${fileIndex}/${files.length} (${originalFile.name})`, 0);
-                    }
-
-                    const { newFile, tmpFile } = await this.generateWorkFiles(originalFile);
-
-                    try
-                    {
-                        // Copy original file to temporary file
-                        await this.app.vault.copy(originalFile.file, tmpFile.getVaultPathWithExtension());
-
-                        if (fs.existsSync(newFile.getFullPathWithExtension()))
-                        {
-                            // Rename original file to new file
-                            await this.app.vault.adapter.remove(newFile.getVaultPathWithExtension());
-                        }
-
-                        await this.app.fileManager.renameFile(originalFile.file, newFile.getVaultPathWithExtension());
-
-                        // Remove original renamed file
-                        await this.app.vault.adapter.remove(newFile.getVaultPathWithExtension());
-
-                        // Convert to new format using ffmpeg
-                        await converter.convert(tmpFile, newFile);
-
-                        // Remove temporary file
-                        await this.app.vault.adapter.remove(tmpFile.getVaultPathWithExtension());
-
-                        fileIndex++;
-                    }
-                    catch (e: unknown)
-                    {
-                        new Notice("An error occured, please check the developer console for more details (Ctrl+Shift+I for Windows or Linux or Cmd+Shift+I for Mac)");
-                        console.error(`An error occured. Check the validity of the file ${originalFile.file.path}.`);
-                        console.error(e);
-                        break;
-                    }
-                }
-                new Notice("Ffmpeg conversion ended successfully");
-                setTimeout(() => (progressNotice as Notice).hide(), 3000);
+                continue;
             }
+
+            let fileIndex = 1;
+            let progressNotice: Notice | undefined;
+
+            // Use of traditional for of to prevent file conflict in async programming
+            for (const originalFile of files)
+            {
+                if (progressNotice)
+                {
+                    progressNotice.setMessage(`Processing file ${fileIndex}/${files.length} (${originalFile.name})`);
+                }
+                else
+                {
+                    progressNotice = new Notice(`Processing file ${fileIndex}/${files.length} (${originalFile.name})`, 0);
+                }
+
+                const { newFile, tmpFile } = await this.generateWorkFiles(originalFile);
+
+                try
+                {
+                    // Copy original file to temporary file
+                    await this.app.vault.copy(originalFile.file, tmpFile.getVaultPathWithExtension());
+
+                    if (fs.existsSync(newFile.getFullPathWithExtension()))
+                    {
+                        // Rename original file to new file
+                        await this.app.vault.adapter.remove(newFile.getVaultPathWithExtension());
+                    }
+
+                    await this.app.fileManager.renameFile(originalFile.file, newFile.getVaultPathWithExtension());
+
+                    // Remove original renamed file
+                    await this.app.vault.adapter.remove(newFile.getVaultPathWithExtension());
+
+                    // Convert to new format using ffmpeg
+                    await converter.convert(tmpFile, newFile);
+
+                    // Remove temporary file
+                    await this.app.vault.adapter.remove(tmpFile.getVaultPathWithExtension());
+
+                    fileIndex++;
+                }
+                catch (e: unknown)
+                {
+                    new Notice(`An error occured when converting ${originalFile.file.path}, please check the developer console for more details (Ctrl+Shift+I for Windows or Linux or Cmd+Shift+I for Mac)`, 5000);
+                    console.error(e);
+                    break;
+                }
+            }
+            new Notice("Ffmpeg conversion ended successfully");
+            setTimeout(() => (progressNotice as Notice).hide(), 3000);
         }
     }
 }

@@ -1,10 +1,46 @@
-import { addIcon } from "obsidian";
+import { addIcon, Notice } from "obsidian";
 import { SettingTab } from "./setting/SettingTab";
 import ObsidianPlugin from "./core/ObsidianPlugin";
 import AssetProcessor from "./processor/AssetProcessor";
+import FfmpegManager from "./utils/FfmpegManager";
+import { findPath } from "./utils/PathFinder";
 
 export default class Main extends ObsidianPlugin
 {
+    async initialize(): Promise<boolean>
+    {
+        const ffmpegPath = await findPath("ffmpeg", this.settings.customFfmpegPath.trim());
+        const ffprobePath = await findPath("ffprobe", this.settings.customFfprobePath.trim());
+
+        if (ffmpegPath === undefined)
+        {
+            new Notice("Ffmpeg is not installed on your system. Please check your environment variable or the settings path.");
+            return false;
+        }
+
+        if (ffprobePath === undefined)
+        {
+            new Notice("Ffprobe is not installed on your system. Please check your environment variable or the settings path.");
+            return false;
+        }
+
+        FfmpegManager.initialize(ffmpegPath, ffprobePath);
+        return true;
+    }
+
+    async convertAssets()
+    {
+        const appInitialized = await this.initialize();
+
+        if (!appInitialized)
+        {
+            return;
+        }
+
+        const processor = new AssetProcessor(this.app, this.settings);
+        await processor.process();
+    }
+
     async onload()
     {
         await super.loadSettings();
@@ -17,13 +53,13 @@ export default class Main extends ObsidianPlugin
         this.addRibbonIcon(
             "progress-bolt",
             "Convert images",
-            async () => await (new AssetProcessor(this.app, this.settings)).process(),
+            async () => await this.convertAssets(),
         );
 
         this.addCommand({
             id: "convert-images",
             name: "Convert images",
-            callback: async () => await (new AssetProcessor(this.app, this.settings)).process(),
+            callback: async () => await this.convertAssets(),
         });
 
         this.addSettingTab(new SettingTab(this.app, this));

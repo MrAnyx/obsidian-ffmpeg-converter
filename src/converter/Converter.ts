@@ -4,12 +4,10 @@ import { SettingType } from "src/setting/SettingType";
 
 export default abstract class Converter
 {
-    private ffmpegPath: string;
     protected settings: SettingType;
 
-    constructor(ffmpegPath: string, settings: SettingType)
+    constructor(settings: SettingType)
     {
-        this.ffmpegPath = ffmpegPath;
         this.settings = settings;
     }
 
@@ -20,6 +18,7 @@ export default abstract class Converter
         return new Promise((resolve, reject) =>
         {
             command
+                .addOption("-y")
                 .input(inputFile.getFullPathWithExtension())
                 .output(outputFile.getFullPathWithExtension())
                 .on("end", resolve)
