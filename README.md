@@ -14,13 +14,15 @@ Files supported by this plugin are the save as the [accepted files from Obsidian
 
 **Image** : `.avif`, `.bmp`, `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`
 
+> Note that it will preserve the loop of `gif` files.
+
 **Video** : `.mp4`, `.mkv`, `.mov`, `.ogv`, `.webm`
 
-**Audio** : `.flac`, `.m4a`, `.mp3`, `.ogg`, `.wav`, `.webm`, `.3gp`
+**Audio** : `.mp3`, `.wav`, `.m4a`, `.flac`, `.ogg`, `.3gp`, `.webm`
 
 ## Requirements
 
-To use this plugin, you must install FFMPEG >= 0.9. Any newer version will work properly.
+To use this plugin, you must install FFMPEG >= 0.9 and FFPROBE >= 0.9. Any newer version will work properly.
 
 ## Installation
 
@@ -30,7 +32,7 @@ You must install [FFMPEG](https://ffmpeg.org/download.html) first in order to us
 
 ## Rollback image in case of error
 
-Not available yet
+In case of error during the convertion process, there is a command `Rollback temporary files` that will convert the temporary back to the original file without affecting the file itself. it will simply rename it properly based on the original file name.
 
 ## Manually installing the plugin
 
