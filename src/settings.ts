@@ -68,9 +68,6 @@ export class SettingTab extends PluginSettingTab
 
     displayGeneralSettings()
     {
-        this.containerEl.createEl("h1", {
-            text: "General",
-        });
         new Setting(this.containerEl)
             .setName("Ffmpeg path")
             .setDesc(
@@ -115,9 +112,8 @@ export class SettingTab extends PluginSettingTab
 
     displayImageSettings()
     {
-        this.containerEl.createEl("h1", {
-            text: "Image",
-        });
+        new Setting(this.containerEl).setName("Image").setHeading();
+
         new Setting(this.containerEl)
             .setName("Output image format")
             .setDesc("Select the output format of the images. Webp is the most performent image format as it is the most space efficient")
@@ -170,9 +166,8 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
 
-        this.containerEl.createEl("h3", {
-            text: "Image formats",
-        });
+        new Setting(this.containerEl).setName("Image formats").setHeading();
+
         new Setting(this.containerEl)
             .setName("Include AVIF")
             .setDesc(`Include all avif files formats (${AvifExtensions.join(", ")})`)
@@ -249,9 +244,8 @@ export class SettingTab extends PluginSettingTab
 
     displayVideoSettings()
     {
-        this.containerEl.createEl("h1", {
-            text: "Video",
-        });
+        new Setting(this.containerEl).setName("Video").setHeading();
+
         new Setting(this.containerEl)
             .setName("Output video format")
             .setDesc("Select the output format of the videos. Webm is the most performent image format as it is the most space efficient")
@@ -317,9 +311,9 @@ export class SettingTab extends PluginSettingTab
                         await this.plugin.saveSettings();
                     }),
             );
-        this.containerEl.createEl("h3", {
-            text: "Video formats",
-        });
+
+        new Setting(this.containerEl).setName("Video formats").setHeading();
+
         new Setting(this.containerEl)
             .setName("Include MP4")
             .setDesc(`Include all mp4 files formats (${Mp4Extensions.join(", ")})`)
