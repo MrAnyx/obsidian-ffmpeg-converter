@@ -1,9 +1,9 @@
 {
     "id": "ffmpeg-converter",
-    "name": "Ffmpeg Converter",
+    "name": "FFmpeg Converter",
     "version": "1.0.0",
     "minAppVersion": "0.15.0",
-    "description": "Convert most used file formats into another format to optimize your vault space",
+    "description": "Convert most used file formats into another format using FFmpeg to optimize your vault space",
     "author": "MrAnyx",
     "authorUrl": "https://github.com/MrAnyx",
     "isDesktopOnly": true

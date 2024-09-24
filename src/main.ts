@@ -81,7 +81,7 @@ export default class FfmpegCompressPlugin extends Plugin
 
         if (ffmpegPath === undefined)
         {
-            new Notice("Ffmpeg is not installed on your system. Please check your environment variable or the settings path.");
+            new Notice("FFmpeg is not installed on your system. Please check your environment variable or the settings path.");
             return;
         }
 
@@ -133,7 +133,7 @@ export default class FfmpegCompressPlugin extends Plugin
                     // Remove original renamed file
                     await this.app.vault.adapter.remove(newFile.getVaultPathWithExtension());
 
-                    // Convert to new format using ffmpeg
+                    // Convert to new format using FFmpeg
                     await ffmpeg.convert(tmpFile, newFile);
 
                     // Remove temporary file
@@ -149,7 +149,7 @@ export default class FfmpegCompressPlugin extends Plugin
                     break;
                 }
             }
-            new Notice("Ffmpeg conversion ended successfully");
+            new Notice("FFmpeg conversion ended successfully");
             setTimeout(() => (progressNotice as Notice).hide(), 3000);
         }
     }

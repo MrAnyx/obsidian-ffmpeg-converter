@@ -69,9 +69,9 @@ export class SettingTab extends PluginSettingTab
     displayGeneralSettings()
     {
         new Setting(this.containerEl)
-            .setName("Ffmpeg path")
+            .setName("FFmpeg path")
             .setDesc(
-                "Overwrite the default Ffmpeg path. Leave empty to use the ffmpeg binary from the environment variables. This setting will be used only if the ffmpeg binary isn't found on your system using the environment variables.",
+                "Overwrite the default FFmpeg path. Leave empty to use the FFmpeg binary from the environment variables. This setting will be used only if the FFmpeg binary isn't found on your system using the environment variables.",
             )
             .addText(text =>
                 text
@@ -169,8 +169,8 @@ export class SettingTab extends PluginSettingTab
         new Setting(this.containerEl).setName("Image formats").setHeading();
 
         new Setting(this.containerEl)
-            .setName("Include AVIF")
-            .setDesc(`Include all avif files formats (${AvifExtensions.join(", ")})`)
+            .setName("Include Avif")
+            .setDesc(`Include all Avif file formats (${AvifExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeAvif)
@@ -181,8 +181,8 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
         new Setting(this.containerEl)
-            .setName("Include BMP")
-            .setDesc(`Include all bmp files formats (${BmpExtensions.join(", ")})`)
+            .setName("Include Bmp")
+            .setDesc(`Include all Bmp file formats (${BmpExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeBmp)
@@ -193,8 +193,8 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
         new Setting(this.containerEl)
-            .setName("Include PNG")
-            .setDesc(`Include all png files formats (${PngExtensions.join(", ")})`)
+            .setName("Include Png")
+            .setDesc(`Include all Png file formats (${PngExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includePng)
@@ -205,8 +205,8 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
         new Setting(this.containerEl)
-            .setName("Include JPG")
-            .setDesc(`Include all jpg files formats (${JpgExtensions.join(", ")})`)
+            .setName("Include Jpg")
+            .setDesc(`Include all Jpg file formats (${JpgExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeJpg)
@@ -217,8 +217,8 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
         new Setting(this.containerEl)
-            .setName("Include GIF")
-            .setDesc(`Include all gif files formats (${GifExtensions.join(", ")})`)
+            .setName("Include Gif")
+            .setDesc(`Include all Gif file formats (${GifExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeGif)
@@ -229,8 +229,8 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
         new Setting(this.containerEl)
-            .setName("Include WEBP")
-            .setDesc(`Include all webp files formats (${WebpExtensions.join(", ")})`)
+            .setName("Include Webp")
+            .setDesc(`Include all Webp file formats (${WebpExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeWebp)
@@ -315,8 +315,8 @@ export class SettingTab extends PluginSettingTab
         new Setting(this.containerEl).setName("Video formats").setHeading();
 
         new Setting(this.containerEl)
-            .setName("Include MP4")
-            .setDesc(`Include all mp4 files formats (${Mp4Extensions.join(", ")})`)
+            .setName("Include Mp4")
+            .setDesc(`Include all Mp4 file formats (${Mp4Extensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeMp4)
@@ -327,8 +327,8 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
         new Setting(this.containerEl)
-            .setName("Include MKV")
-            .setDesc(`Include all mkv files formats (${MkvExtensions.join(", ")})`)
+            .setName("Include Mkv")
+            .setDesc(`Include all Mkv file formats (${MkvExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeMkv)
@@ -339,8 +339,8 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
         new Setting(this.containerEl)
-            .setName("Include MOV")
-            .setDesc(`Include all mov files formats (${MovExtensions.join(", ")})`)
+            .setName("Include Mov")
+            .setDesc(`Include all Mov file formats (${MovExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeMov)
@@ -351,8 +351,8 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
         new Setting(this.containerEl)
-            .setName("Include OGV")
-            .setDesc(`Include all ogv files formats (${OgvExtensions.join(", ")})`)
+            .setName("Include Ogv")
+            .setDesc(`Include all Ogv file formats (${OgvExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeOgv)
@@ -363,8 +363,8 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
         new Setting(this.containerEl)
-            .setName("Include WEBM")
-            .setDesc(`Include all webm files formats (${WebmExtensions.join(", ")})`)
+            .setName("Include Webm")
+            .setDesc(`Include all Webm file formats (${WebmExtensions.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeWebm)

@@ -22,9 +22,9 @@ To use this plugin, you must install FFMPEG >= 0.9. Any newer version will work 
 
 ## Installation
 
-To install this plugin, simply go to the officiel plugin store from Obsidian and search for **Ffmpeg Converter**.
+To install this plugin, simply go to the officiel plugin store from Obsidian and search for **FFmpeg Converter**.
 
-You must install [FFMPEG](https://ffmpeg.org/download.html) first in order to use this plugin properly. Once downloaded, simply add the `bin` folder of FFMPEG to your environment variables and you're good to go !
+You must install [FFmpeg](https://ffmpeg.org/download.html) first in order to use this plugin properly. Once downloaded, simply add the `bin` folder of FFmpeg to your environment variables and you're good to go !
 
 ## Manually installing the plugin
 
