@@ -3,8 +3,8 @@ import { SettingTab } from "./setting/SettingTab";
 import ObsidianPlugin from "./core/ObsidianPlugin";
 import AssetProcessor from "./processor/AssetProcessor";
 import FfmpegManager from "./utils/FfmpegManager";
-import { findPath } from "./utils/PathFinder";
 import RollbackProcessor from "./processor/RollbackProcessor";
+import { findPath } from "./utils/pathFinder";
 
 export default class Main extends ObsidianPlugin
 {
@@ -15,13 +15,13 @@ export default class Main extends ObsidianPlugin
 
         if (ffmpegPath === undefined)
         {
-            new Notice("Ffmpeg is not installed on your system. Please check your environment variable or the settings path.");
+            new Notice("FFmpeg is not installed on your system. Please check your environment variable or the settings path.");
             return false;
         }
 
         if (ffprobePath === undefined)
         {
-            new Notice("Ffprobe is not installed on your system. Please check your environment variable or the settings path.");
+            new Notice("FFprobe is not installed on your system. Please check your environment variable or the settings path.");
             return false;
         }
 

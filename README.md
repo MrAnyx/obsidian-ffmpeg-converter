@@ -1,10 +1,10 @@
-# Obsidian FFMPEG Converter
+# Obsidian FFmpeg Converter
 
 Optimize your vault space by converting your images, video and audio into a more compact format or with reduced quality.
 
 Most users can reduce the size of their vault by 70%.
 
-The conversion of your assets is optimized thanks to FFMPEG, a powerful open-source tool.
+The conversion of your assets is optimized thanks to FFmpeg, a powerful open-source tool.
 
 > ⚠️ Disclaimer : You should always backup your vault before using this plugin.
 
@@ -20,13 +20,13 @@ Files supported by this plugin are the save as the [accepted files from Obsidian
 
 ## Requirements
 
-To use this plugin, you must install FFMPEG >= 0.9 and FFPROBE >= 0.9. Any newer version will work properly.
+To use this plugin, you must install FFmpeg >= 0.9 and FFprobe >= 0.9. Any newer version will work properly.
 
 ## Installation
 
-To install this plugin, simply go to the officiel plugin store from Obsidian and search for **Ffmpeg Converter**.
+To install this plugin, simply go to the officiel plugin store from Obsidian and search for **FFmpeg Converter**.
 
-You must install [FFMPEG](https://ffmpeg.org/download.html) first in order to use this plugin properly. Once downloaded, simply add the `bin` folder of FFMPEG to your environment variables and you're good to go !
+You must install [FFmpeg](https://ffmpeg.org/download.html) first in order to use this plugin properly. Once downloaded, simply add the `bin` folder of FFmpeg to your environment variables and you're good to go !
 
 ## Rollback image in case of error
 

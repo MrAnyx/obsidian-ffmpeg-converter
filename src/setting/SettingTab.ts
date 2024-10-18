@@ -14,12 +14,9 @@ export class SettingTab extends PluginSettingTab
 
     displayGeneralSettings()
     {
-        this.containerEl.createEl("h1", {
-            text: "General",
-        });
         new Setting(this.containerEl)
-            .setName("Ffmpeg path")
-            .setDesc("Overwrite the default Ffmpeg path. Leave empty to use the ffmpeg binary from the environment variables. This setting will be used only if the ffmpeg binary isn't found on your system using the environment variables.")
+            .setName("FFmpeg path")
+            .setDesc("Overwrite the default FFmpeg path. Leave empty to use the FFmpeg binary from the environment variables. This setting will be used only if the FFmpeg binary isn't found on your system using the environment variables.")
             .addText(text =>
                 text
                     .setValue(this.plugin.settings.customFfmpegPath)
@@ -30,14 +27,14 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
         new Setting(this.containerEl)
-            .setName("Ffprobe path")
-            .setDesc("Overwrite the default Ffprobe path. Leave empty to use the ffprobe binary from the environment variables. This setting will be used only if the ffprobe binary isn't found on your system using the environment variables.")
+            .setName("FFprobe path")
+            .setDesc("Overwrite the default FFprobe path. Leave empty to use the FFprobe binary from the environment variables. This setting will be used only if the FFprobe binary isn't found on your system using the environment variables.")
             .addText(text =>
                 text
-                    .setValue(this.plugin.settings.customFfmpegPath)
+                    .setValue(this.plugin.settings.customFfprobePath)
                     .onChange(async (value) =>
                     {
-                        this.plugin.settings.customFfmpegPath = value.trim();
+                        this.plugin.settings.customFfprobePath = value.trim();
                         await this.plugin.saveSettings();
                     }),
             );
@@ -71,9 +68,8 @@ export class SettingTab extends PluginSettingTab
 
     displayImageSettings()
     {
-        this.containerEl.createEl("h1", {
-            text: "Image",
-        });
+        new Setting(this.containerEl).setName('Image').setHeading();
+
         new Setting(this.containerEl)
             .setName("Output image format")
             .setDesc("Select the output format of the images. Webp is the most performant format as it is the most space efficient")
@@ -115,7 +111,7 @@ export class SettingTab extends PluginSettingTab
 
         new Setting(this.containerEl)
             .setName("Output max size")
-            .setDesc("Specify the max width of height of the output file")
+            .setDesc("Specify the max width or height of the output file")
             .addSlider(slider =>
                 slider
                     .setLimits(100, 10000, 100)
@@ -128,12 +124,11 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
 
-        this.containerEl.createEl("h3", {
-            text: "Image formats",
-        });
+        new Setting(this.containerEl).setName('Image formats').setHeading();
+
         new Setting(this.containerEl)
             .setName("Include AVIF")
-            .setDesc(`Include all avif files formats (${ImageExtensions.avif.join(", ")})`)
+            .setDesc(`Include all AVIF files (${ImageExtensions.avif.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeImageAvif)
@@ -145,7 +140,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include BMP")
-            .setDesc(`Include all bmp files formats (${ImageExtensions.bmp.join(", ")})`)
+            .setDesc(`Include all BMP files (${ImageExtensions.bmp.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeImageBmp)
@@ -157,7 +152,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include PNG")
-            .setDesc(`Include all png files formats (${ImageExtensions.png.join(", ")})`)
+            .setDesc(`Include all PNG files (${ImageExtensions.png.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeImagePng)
@@ -169,7 +164,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include JPG")
-            .setDesc(`Include all jpg files formats (${ImageExtensions.jpg.join(", ")})`)
+            .setDesc(`Include all JPG files (${ImageExtensions.jpg.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeImageJpg)
@@ -181,7 +176,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include GIF")
-            .setDesc(`Include all gif files formats (${ImageExtensions.gif.join(", ")})`)
+            .setDesc(`Include all GIF files (${ImageExtensions.gif.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeImageGif)
@@ -193,13 +188,13 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include WEBP")
-            .setDesc(`Include all webp files formats (${ImageExtensions.webp.join(", ")})`)
+            .setDesc(`Include all WEBP files (${ImageExtensions.webp.join(", ")})`)
             .addToggle(toggle =>
                 toggle
-                    .setValue(this.plugin.settings.includeAudioWebp)
+                    .setValue(this.plugin.settings.includeImageWebp)
                     .onChange(async (value) =>
                     {
-                        this.plugin.settings.includeAudioWebp = value;
+                        this.plugin.settings.includeImageWebp = value;
                         await this.plugin.saveSettings();
                     }),
             );
@@ -207,9 +202,8 @@ export class SettingTab extends PluginSettingTab
 
     displayVideoSettings()
     {
-        this.containerEl.createEl("h1", {
-            text: "Video",
-        });
+        new Setting(this.containerEl).setName('Video').setHeading();
+
         new Setting(this.containerEl)
             .setName("Output video format")
             .setDesc("Select the output format of the videos. Webm is the most performant format as it is the most space efficient")
@@ -263,7 +257,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Output max size")
-            .setDesc("Specify the max width of height of the output file")
+            .setDesc("Specify the max width or height of the output file")
             .addSlider(slider =>
                 slider
                     .setLimits(100, 10000, 100)
@@ -290,12 +284,11 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
 
-        this.containerEl.createEl("h3", {
-            text: "Video formats",
-        });
+        new Setting(this.containerEl).setName('Video formats').setHeading();
+
         new Setting(this.containerEl)
             .setName("Include MP4")
-            .setDesc(`Include all mp4 files formats (${VideoExtensions.mp4.join(", ")})`)
+            .setDesc(`Include all MP4 files (${VideoExtensions.mp4.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeVideoMp4)
@@ -307,7 +300,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include MKV")
-            .setDesc(`Include all mkv files formats (${VideoExtensions.mkv.join(", ")})`)
+            .setDesc(`Include all MKV files (${VideoExtensions.mkv.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeVideoMkv)
@@ -319,7 +312,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include MOV")
-            .setDesc(`Include all mov files formats (${VideoExtensions.mov.join(", ")})`)
+            .setDesc(`Include all MOV files (${VideoExtensions.mov.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeVideoMov)
@@ -331,7 +324,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include OGV")
-            .setDesc(`Include all ogv files formats (${VideoExtensions.ogv.join(", ")})`)
+            .setDesc(`Include all OGV files (${VideoExtensions.ogv.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeVideoOgv)
@@ -343,7 +336,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include WEBM")
-            .setDesc(`Include all webm files formats (${VideoExtensions.webm.join(", ")})`)
+            .setDesc(`Include all WEBM files (${VideoExtensions.webm.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeVideoWebm)
@@ -357,9 +350,8 @@ export class SettingTab extends PluginSettingTab
 
     displayAudioSettings()
     {
-        this.containerEl.createEl("h1", {
-            text: "Audio",
-        });
+        new Setting(this.containerEl).setName('Audio').setHeading();
+
         new Setting(this.containerEl)
             .setName("Output audio format")
             .setDesc("Select the output format of the audios. Webm is the most performant format as it is the most space efficient")
@@ -399,12 +391,11 @@ export class SettingTab extends PluginSettingTab
                     }),
             );
 
-        this.containerEl.createEl("h3", {
-            text: "Audio formats",
-        });
+        new Setting(this.containerEl).setName('Audio formats').setHeading();
+
         new Setting(this.containerEl)
             .setName("Include MP3")
-            .setDesc(`Include all mp3 files formats (${AudioExtensions.mp3.join(", ")})`)
+            .setDesc(`Include all MP3 files (${AudioExtensions.mp3.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeAudioMp3)
@@ -416,7 +407,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include WAV")
-            .setDesc(`Include all wav files formats (${AudioExtensions.wav.join(", ")})`)
+            .setDesc(`Include all WAV files (${AudioExtensions.wav.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeAudioWav)
@@ -428,7 +419,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include M4A")
-            .setDesc(`Include all m4a files formats (${AudioExtensions.m4a.join(", ")})`)
+            .setDesc(`Include all M4A files (${AudioExtensions.m4a.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeAudioM4a)
@@ -440,7 +431,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include FLAC")
-            .setDesc(`Include all flac files formats (${AudioExtensions.flac.join(", ")})`)
+            .setDesc(`Include all FLAC files (${AudioExtensions.flac.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeAudioFlac)
@@ -452,7 +443,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include OGG")
-            .setDesc(`Include all ogg files formats (${AudioExtensions.ogg.join(", ")})`)
+            .setDesc(`Include all OGG files (${AudioExtensions.ogg.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeAudioOgg)
@@ -464,7 +455,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include 3GP")
-            .setDesc(`Include all 3gp files formats (${AudioExtensions["3gp"].join(", ")})`)
+            .setDesc(`Include all 3GP files (${AudioExtensions["3gp"].join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeAudio3gp)
@@ -476,7 +467,7 @@ export class SettingTab extends PluginSettingTab
             );
         new Setting(this.containerEl)
             .setName("Include WEBM")
-            .setDesc(`Include all webm files formats (${AudioExtensions.webm.join(", ")})`)
+            .setDesc(`Include all WEBM files (${AudioExtensions.webm.join(", ")})`)
             .addToggle(toggle =>
                 toggle
                     .setValue(this.plugin.settings.includeAudioWebm)

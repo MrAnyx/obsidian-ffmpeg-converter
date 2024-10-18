@@ -6,9 +6,9 @@ import AudioLoader from "src/loader/AudioLoader";
 import ImageLoader from "src/loader/ImageLoader";
 import VideoLoader from "src/loader/VideoLoader";
 import { SettingType } from "src/setting/SettingType";
-import { generateUniqueId } from "src/utils/UniqueId";
 import fs from "fs";
 import Processor from "./Processor";
+import { generateUniqueId } from "src/utils/uniqueId";
 
 export default class AssetProcessor extends Processor
 {
@@ -23,7 +23,7 @@ export default class AssetProcessor extends Processor
                 ...(this.settings.includeImagePng ? ImageExtensions.png : []),
                 ...(this.settings.includeImageJpg ? ImageExtensions.jpg : []),
                 ...(this.settings.includeImageGif ? ImageExtensions.gif : []),
-                ...(this.settings.includeAudioWebp ? ImageExtensions.webp : []),
+                ...(this.settings.includeImageWebp ? ImageExtensions.webp : []),
             ]),
             new VideoLoader(this.app, [
                 ...(this.settings.includeVideoMp4 ? VideoExtensions.mp4 : []),
@@ -132,7 +132,7 @@ export default class AssetProcessor extends Processor
                     // Remove original renamed file
                     await this.app.vault.adapter.remove(newFile.getVaultPathWithExtension());
 
-                    // Convert to new format using ffmpeg
+                    // Convert to new format using FFmpeg
                     await converter.convert(tmpFile, newFile);
 
                     // Remove temporary file
@@ -149,7 +149,7 @@ export default class AssetProcessor extends Processor
             }
         }
 
-        new Notice("Ffmpeg conversion ended successfully");
+        new Notice("FFmpeg conversion ended successfully");
         setTimeout(() => progressNotice?.hide(), 3000);
     }
 }

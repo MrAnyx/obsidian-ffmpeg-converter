@@ -14,7 +14,7 @@ export interface SettingType
     includeImagePng: boolean;
     includeImageJpg: boolean;
     includeImageGif: boolean;
-    includeAudioWebp: boolean;
+    includeImageWebp: boolean;
     outputImageFormat: string;
 
     // Video
@@ -54,7 +54,7 @@ export const DefaultSettings: SettingType = {
     includeImagePng: true,
     includeImageJpg: true,
     includeImageGif: true,
-    includeAudioWebp: false,
+    includeImageWebp: false,
     outputImageFormat: "webp",
 
     videoMaxSize: 2000,
