@@ -99,7 +99,7 @@ export class SettingTab extends PluginSettingTab
             .setDesc("Output quality used during the conversion")
             .addSlider(slider =>
                 slider
-                    .setLimits(0, 100, 5)
+                    .setLimits(5, 100, 5)
                     .setValue(this.plugin.settings.imageQuality)
                     .setDynamicTooltip()
                     .onChange(async (value) =>
